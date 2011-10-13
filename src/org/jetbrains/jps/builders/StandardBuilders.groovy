@@ -150,41 +150,60 @@ class GroovycBuilder implements ModuleBuilder {
       }
     }
 
-    // unfortunately we cannot use standard groovyc task with fork=true because of a bug in Groovyc task: it creates too long command line if classpath is large
-    int size = groovyFiles.size()
-    project.stage("Compiling ${size} groovy file${size > 1 ? "s" : ""}")
-
     List<String> classpathList = new ArrayList<String>(state.classpath.size() + 1)
     classpathList.addAll(state.classpath)
-    classpathList.add(destDir)
-    def classpathString = classpathList.join(File.pathSeparator)
+    classpathList.add(destDir)// Includes classes generated there by javac compiler
 
-    String tempDirPath = project.builder.getTempDirectoryPath("groovyc_commandline_${moduleChunk.name}")
-    ant.mkdir(dir: tempDirPath)
-    def commandLineFile = new File(tempDirPath, "command-line.txt")
-    commandLineFile.withPrintWriter {PrintWriter out ->
-      out.println("-classpath")
-      out.println(classpathString)
-      out.println("-d")
-      out.println(destDir)
-      groovyFiles.each {
-        out.println(it)
+    if (project.builder.runGroovyCompilerInSeparateProcess) {
+      // unfortunately we cannot use standard groovyc task with fork=true because of a bug in Groovyc task: it creates too long command line if classpath is large
+      int size = groovyFiles.size()
+      project.stage("Compiling ${size} groovy file${size > 1 ? "s" : ""}")
+
+      def classpathString = classpathList.join(File.pathSeparator)
+
+      String tempDirPath = project.builder.getTempDirectoryPath("groovyc_commandline_${moduleChunk.name}")
+      ant.mkdir(dir: tempDirPath)
+      def commandLineFile = new File(tempDirPath, "command-line.txt")
+      commandLineFile.withPrintWriter {PrintWriter out ->
+        out.println("-classpath")
+        out.println(classpathString)
+        out.println("-d")
+        out.println(destDir)
+        groovyFiles.each {
+          out.println(it)
+        }
+      }
+      def classpathFile = new File(tempDirPath, "classpath.txt")
+      classpathFile.withPrintWriter {PrintWriter out ->
+        classpathList.each {
+          out.println(it)
+        }
+      }
+
+      ant.java(classname: ProgramRunner.class.name, fork: "true", failonerror: "true") {
+        classpath {
+          pathelement(location: new File(ProgramRunner.class.protectionDomain.codeSource.location.toURI()).absolutePath)
+        }
+        arg(value: classpathFile.absolutePath)
+        arg(value: commandLineFile.absolutePath)
+        arg(value: FileSystemCompiler.class.name)
       }
     }
-    def classpathFile = new File(tempDirPath, "classpath.txt")
-    classpathFile.withPrintWriter {PrintWriter out ->
-      classpathList.each {
-        out.println(it)
-      }
-    }
+    else {
+      ant.groovyc(destdir: destDir) {
+        state.sourceRoots.each {
+          src(path: it)
+        }
 
-    ant.java(classname: ProgramRunner.class.name, fork: "true", failonerror: "true") {
-      classpath {
-        pathelement(location: new File(ProgramRunner.class.protectionDomain.codeSource.location.toURI()).absolutePath)
+        include(name: "**/*.groovy")
+
+        classpath {
+          classpathList.each {
+            pathelement(location: it)
+          }
+        }
       }
-      arg(value: classpathFile.absolutePath)
-      arg(value: commandLineFile.absolutePath)
-      arg(value: FileSystemCompiler.class.name)
+
     }
 
     ant.touch() {

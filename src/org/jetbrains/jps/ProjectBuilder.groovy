@@ -34,6 +34,7 @@ class ProjectBuilder {
   boolean useInProcessJavac
   boolean compressJars = true
   boolean arrangeModuleCyclesOutputs
+  boolean runGroovyCompilerInSeparateProcess = true
 
   private final TempFileContainer tempFileContainer
 
