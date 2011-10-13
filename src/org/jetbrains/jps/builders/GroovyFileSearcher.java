@@ -1,6 +1,7 @@
 package org.jetbrains.jps.builders;
 
 import java.io.File;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -8,24 +9,30 @@ import java.util.List;
  */
 public class GroovyFileSearcher {
   public static boolean containGroovyFiles(List<? extends CharSequence> paths) {
-    for (CharSequence path : paths) {
-      if (containGroovyFiles(new File(path.toString()))) {
-        return true;
-      }
-    }
-    return false;
+    return !collectGroovyFiles(paths).isEmpty();
   }
 
-  private static boolean containGroovyFiles(File file) {
-    final File[] files = file.listFiles();
-    if (files != null) {
-      for (File child : files) {
-        if (containGroovyFiles(child)) {
-          return true;
+  public static List<String> collectGroovyFiles(List<? extends CharSequence> paths) {
+    List<String> result = new ArrayList<String>();
+    for (CharSequence path : paths) {
+      collectGroovyFiles(new File(path.toString()), result);
+    }
+    return result;
+  }
+
+  private static void collectGroovyFiles(File file, List<String> result) {
+    if (file.isDirectory()) {
+      final File[] files = file.listFiles();
+      if (files != null) {
+        for (File child : files) {
+          collectGroovyFiles(child, result);
         }
       }
-      return false;
     }
-    return file.getName().endsWith(".groovy");
+    else {
+      if (file.getName().endsWith(".groovy")) {
+        result.add(file.getAbsolutePath());
+      }
+    }
   }
 }
