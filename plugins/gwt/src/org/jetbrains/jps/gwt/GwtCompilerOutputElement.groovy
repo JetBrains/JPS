@@ -21,6 +21,10 @@ class GwtCompilerOutputElement extends ComplexLayoutElement {
     }
 
     GwtFacet gwtFacet = (GwtFacet)facet
+    if (gwtFacet.tempOutputDir == null) {
+      project.info("GWT Facet $facetId wasn't compiled so its output won't be included into the artifact")
+      return []
+    }
     return [new DirectoryCopyElement(dirPath: gwtFacet.tempOutputDir)]
   }
 
