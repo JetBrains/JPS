@@ -88,12 +88,19 @@ class JavacBuilder implements ModuleBuilder, ModuleCycleBuilder {
 
   private String getJavacExecutable(ModuleChunk module) {
     def customJavac = module["javac"]
-    def jdk = module.getSdk()
     if (customJavac != null) {
       return customJavac
     }
-    else if (jdk instanceof JavaSdk) {
-      return jdk.getJavacExecutable()
+
+    JavaSdk sdk = getSdk(module);
+    if (sdk != null) return sdk.getJavacExecutable();
+    return null;
+  }
+
+  static JavaSdk getSdk(ModuleChunk module) {
+    def jdk = module.getSdk()
+    if (jdk instanceof JavaSdk) {
+      return jdk;
     }
     return null
   }
@@ -180,7 +187,15 @@ class GroovycBuilder implements ModuleBuilder {
         }
       }
 
-      ant.java(classname: ProgramRunner.class.name, fork: "true", failonerror: "true") {
+      def attrs = [:];
+      attrs["classname"] = ProgramRunner.class.name;
+      attrs["fork"] = "true";
+      attrs["failonerror"] = "true";
+
+      def sdk = JavacBuilder.getSdk(moduleChunk)
+      if (sdk != null) attrs["jvm"] = sdk.getJavaExecutable();
+
+      ant.java(attrs) {
         classpath {
           pathelement(location: new File(ProgramRunner.class.protectionDomain.codeSource.location.toURI()).absolutePath)
         }
