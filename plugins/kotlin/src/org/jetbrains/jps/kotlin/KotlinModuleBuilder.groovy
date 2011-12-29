@@ -18,7 +18,7 @@ class KotlinModuleBuilder implements ModuleBuilder {
         }
 
         if (!kotlinFiles.empty) {
-            String kotlinHome = project.kotlinHome
+            String kotlinHome = project.getPropertyIfDefined("kotlinHome")
 
             if (kotlinHome == null) {
                 ant.fail("kotlinHome is not defined")
