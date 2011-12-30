@@ -5,17 +5,22 @@ import org.jetbrains.jps.ModuleBuildState
 import org.jetbrains.jps.ModuleChunk
 import org.jetbrains.jps.Project
 import groovy.io.FileType
-import org.jetbrains.jps.builders.BuildUtil
 
 /**
  * @author max
  */
 class KotlinModuleBuilder implements ModuleBuilder {
     def processModule(ModuleBuildState state, ModuleChunk moduleChunk, Project project) {
+        // TODO: Attempt to compile standard library results in "duplicate declaration" since we do have those in compiler embedded
+        if ("stdlib" == moduleChunk.getName()) return
+        if ("examples" == moduleChunk.getName()) return
+
         List<File> kotlinFiles = []
         state.sourceRoots.each {
             scanKotlinFiles(new File(it), kotlinFiles)
         }
+
+        def ant = project.binding.ant
 
         if (!kotlinFiles.empty) {
             String kotlinHome = project.getPropertyIfDefined("kotlinHome")
@@ -27,57 +32,50 @@ class KotlinModuleBuilder implements ModuleBuilder {
             if (!new File(kotlinHome, "lib/kotlin-compiler.jar").exists()) {
                 ant.fail("'$kotlinHome' is not a valid Kotlin compiler. Can't find lib/kotlin-compiler.jar there")
             }
-            
-            String stubsRoot = createTempDir(state, project)
+
+            ant.mkdir(dir: state.targetFolder)
 
             StringBuilder builder = new StringBuilder()
             builder.append("import kotlin.modules.*\n")
             builder.append("val modules = module(\"${moduleChunk.name}\") {\n")
-            
+
             kotlinFiles.each {
                 builder.append("source files \"${it.absolutePath}\"\n")
             }
-            
-            state.classpath.each {
-                builder.append("classpath entry \"${it}\"")
-            }
-            
-            builder.append("jar name \"$stubsRoot/kt.jar\"")
-            
-            builder.append("}")
 
-            def moduleFile = new File(stubsRoot, "module.kts")
+            state.classpath.each {
+                if (new File(it).exists()) {
+                    builder.append("classpath entry \"${it}\"\n")
+                }
+            }
+
+            builder.append("}\n")
+
+            def moduleFile = new File(state.targetFolder, "module.kts")
             moduleFile.text = builder.toString()
-            
+
+            def jarName = "${state.targetFolder}/kt.jar"
             ant.java(classname: "org.jetbrains.jet.cli.KotlinCompiler", fork: "true") {
                 jvmarg(line: "-ea -Xmx300m -XX:MaxPermSize=200m")
 
                 arg(value: "-module")
                 arg(value: "${moduleFile.absolutePath}")
-                
+
+                arg(value: "-jar")
+                arg(value: jarName)
+
                 classpath() {
                     fileset(dir: "$kotlinHome/lib") {
                         include(name: "*.jar")
                     }
                 }
             }
-            
-            state.classpath << "$stubsRoot/kt.jar"
-            ant.unjar(src: "$stubsRoot/kt.jar", dest: state.targetFolder)
+
+            moduleFile.delete();
+
+            state.classpath << jarName
+            ant.unjar(src: jarName, dest: state.targetFolder)
         }
-    }
-
-    private String createTempDir(ModuleBuildState state, Project project) {
-        String targetFolder = project.targetFolder
-        
-        File sutbsDir = new File(targetFolder != null ? targetFolder : ".", "___temp___")
-        def stubsRoot = sutbsDir.getAbsolutePath()
-
-        BuildUtil.deleteDir(project, stubsRoot)
-        ant.mkdir(dir: sutbsDir)
-
-        state.tempRootsToDelete << stubsRoot
-        return stubsRoot
     }
 
     def scanKotlinFiles(File file, List<File> answer) {
