@@ -40,12 +40,12 @@ class KotlinModuleBuilder implements ModuleBuilder {
             builder.append("val modules = module(\"${moduleChunk.name}\") {\n")
 
             kotlinFiles.each {
-                builder.append("source files \"${it.absolutePath}\"\n")
+                builder.append("source files \"${path(it.absolutePath)}\"\n")
             }
 
             state.classpath.each {
                 if (new File(it).exists()) {
-                    builder.append("classpath entry \"${it}\"\n")
+                    builder.append("classpath entry \"${path(it)}\"\n")
                 }
             }
 
@@ -76,6 +76,10 @@ class KotlinModuleBuilder implements ModuleBuilder {
             state.classpath << jarName
             ant.unjar(src: jarName, dest: state.targetFolder)
         }
+    }
+    
+    String path(String raw) {
+        return raw.replace('\\', '/')
     }
 
     def scanKotlinFiles(File file, List<File> answer) {
