@@ -11,8 +11,7 @@ import groovy.io.FileType
  */
 class KotlinModuleBuilder implements ModuleBuilder {
     def processModule(ModuleBuildState state, ModuleChunk moduleChunk, Project project) {
-        // TODO: Attempt to compile standard library results in "duplicate declaration" since we do have those in compiler embedded
-        if ("stdlib" == moduleChunk.getName()) return
+        // TODO: examples do not compile %)
         if ("examples" == moduleChunk.getName()) return
 
         List<File> kotlinFiles = []
