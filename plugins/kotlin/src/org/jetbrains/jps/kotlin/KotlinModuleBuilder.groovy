@@ -40,7 +40,7 @@ class KotlinModuleBuilder implements ModuleBuilder {
             builder.append("module(\"${moduleChunk.name}\") {\n")
 
             state.sourceRoots.each {
-                builder.append("sources += \"${path(it.absolutePath)}\"\n")
+                builder.append("sources += \"${path(it)}\"\n")
             }
 
             state.classpath.each {
