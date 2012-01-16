@@ -36,18 +36,20 @@ class KotlinModuleBuilder implements ModuleBuilder {
 
             StringBuilder builder = new StringBuilder()
             builder.append("import kotlin.modules.*\n")
-            builder.append("val modules = module(\"${moduleChunk.name}\") {\n")
+            builder.append("fun project() {\n")
+            builder.append("module(\"${moduleChunk.name}\") {\n")
 
-            kotlinFiles.each {
-                builder.append("source files \"${path(it.absolutePath)}\"\n")
+            state.sourceRoots.each {
+                builder.append("sources += \"${path(it.absolutePath)}\"\n")
             }
 
             state.classpath.each {
                 if (new File(it).exists()) {
-                    builder.append("classpath entry \"${path(it)}\"\n")
+                    builder.append("classpath += \"${path(it)}\"\n")
                 }
             }
 
+            builder.append("}\n")
             builder.append("}\n")
 
             def moduleFile = new File(state.targetFolder, "module.kts")
