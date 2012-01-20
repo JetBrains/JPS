@@ -32,6 +32,7 @@ class JavacSettingsTest extends JpsBuildTestCase {
 
   public void test_javac_excludes_classes() throws Exception {
     Project project = loadProject("testData/javacExcludes/javacExcludes.ipr", [:]);
+    project.clean();
     project.makeAll(); // must compile without errors
   }
 }

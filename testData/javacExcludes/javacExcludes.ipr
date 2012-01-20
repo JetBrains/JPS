@@ -11,6 +11,7 @@
     <excludeFromCompile>
       <file url="file://$PROJECT_DIR$/src/MyClass2.java" />
       <file url="file://$PROJECT_DIR$/src/MyClass3.java" />
+      <file url="file://$PROJECT_DIR$/src2/MyClass2.java" />
       <directory url="file://$PROJECT_DIR$/src/pkg2" includeSubdirectories="true"/>
     </excludeFromCompile>
     <resourceExtensions />
@@ -200,6 +201,7 @@
   <component name="ProjectModuleManager">
     <modules>
       <module fileurl="file://$PROJECT_DIR$/javacExcludes.iml" filepath="$PROJECT_DIR$/javacExcludes.iml" />
+      <module fileurl="file://$PROJECT_DIR$/module/module.iml" filepath="$PROJECT_DIR$/module/module.iml" />
     </modules>
   </component>
   <component name="ProjectResources">

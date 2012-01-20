@@ -84,7 +84,10 @@ class JavacBuilder implements ModuleBuilder, ModuleCycleBuilder {
 
       globalExcludes.each { String name ->
         state.sourceRoots.each {String src ->
-          exclude(name: PathUtil.relativeOrAbsolute(src, name))
+          def relPath = PathUtil.relativeOrAbsolute(src, name);
+          if (!relPath.equals(name)) {
+            exclude(name: relPath)
+          }
         }
       }
 
