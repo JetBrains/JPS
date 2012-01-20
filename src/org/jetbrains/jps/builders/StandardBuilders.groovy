@@ -60,7 +60,10 @@ class JavacBuilder implements ModuleBuilder, ModuleCycleBuilder {
       params.executable = javacExecutable
     }
 
-    def ant = module.project.binding.ant
+    def ant = module.project.binding.ant;
+
+    def globalExcludes = module.project.props["compiler.excludes"] ?: [];
+
     ant.javac(params) {
       if (customArgs) {
         compilerarg(line: customArgs)
@@ -72,9 +75,16 @@ class JavacBuilder implements ModuleBuilder, ModuleCycleBuilder {
 
       state.excludes.each { String root ->
         state.sourceRoots.each {String src ->
-          if (root.startsWith("${src}/")) {
-            exclude(name: "${root.substring(src.length() + 1)}/**")
+          def relPath = PathUtil.relativeOrAbsolute(src, root);
+          if (!relPath.equals(root)) {
+            exclude(name: "${relPath}/**")
           }
+        }
+      }
+
+      globalExcludes.each { String name ->
+        state.sourceRoots.each {String src ->
+          exclude(name: PathUtil.relativeOrAbsolute(src, name))
         }
       }
 
@@ -315,4 +325,8 @@ class CustomTasksBuilder implements ModuleBuilder {
       }
     } as ModuleBuildTask)
   }
+}
+
+class CommonCompilerOptions {
+
 }
