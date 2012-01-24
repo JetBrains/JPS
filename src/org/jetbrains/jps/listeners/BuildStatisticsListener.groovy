@@ -22,9 +22,11 @@ class BuildStatisticsListener implements JpsBuildListener {
 
   def onBuildFinished(Project project) {
     long delta = System.currentTimeMillis() - buildStartTime
-    project.info("Total compilation time: ${formatTime(delta)}, ${compiledJavaFiles} java files in ${compiledChunks} chunks compiled")
-    elapsedTime.each {key, time ->
-      project.info(" $key: ${formatTime(time)}")
+    if (compiledJavaFiles > 0) { // print statistics only if Javac was called through API
+      project.info("Total compilation time: ${formatTime(delta)}, ${compiledJavaFiles} java files in ${compiledChunks} chunks compiled")
+      elapsedTime.each {key, time ->
+        project.info(" $key: ${formatTime(time)}")
+      }
     }
   }
 

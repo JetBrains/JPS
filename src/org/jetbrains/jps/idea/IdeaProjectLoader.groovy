@@ -139,9 +139,25 @@ public class IdeaProjectLoader {
   }
 
   private def loadCompilerConfiguration(Node root) {
+    def componentTag = getComponent(root, "CompilerConfiguration")
+
+    processCompilerResources(componentTag);
+    processCompilerExcludes(componentTag);
+
+    processJavacOptions(root); // it seems this must be done in Javac builder
+  }
+
+  private processJavacOptions(Node root) {
+    def javacComponentTag = getComponent(root, "JavacSettings");
+    project.props["compiler.javac.options"] = [:];
+    javacComponentTag?.option?.each {Node optionTag ->
+      project.props["compiler.javac.options"][optionTag."@name"] = optionTag."@value";
+    }
+  }
+
+  private processCompilerResources(Node componentTag) {
     def includePatterns = []
     def excludePatterns = []
-    def componentTag = getComponent(root, "CompilerConfiguration")
     componentTag?.wildcardResourcePatterns?.getAt(0)?.entry?.each {Node entryTag ->
       String pattern = entryTag."@name"
       if (pattern.startsWith("!")) {
@@ -158,11 +174,21 @@ public class IdeaProjectLoader {
       }
       project.props["compiler.resources.id"] = "compiler.resources"
     }
+  }
 
-    def javacComponentTag = getComponent(root, "JavacSettings");
-    project.props["compiler.javac.options"] = [:];
-    javacComponentTag?.option?.each {Node optionTag ->
-      project.props["compiler.javac.options"][optionTag."@name"] = optionTag."@value";
+  private def processCompilerExcludes(Node compilerConfigurationTag) {
+    def excludePatterns = [];
+    compilerConfigurationTag?.excludeFromCompile?.getAt(0)?.directory?.each {Node dirTag ->
+      def path = PathUtil.toSystemIndependentPath(projectMacroExpander.expandMacros(IdeaProjectLoadingUtil.pathFromUrl(dirTag."@url")));
+      def recursive = Boolean.valueOf(dirTag."@includeSubdirectories");
+      excludePatterns << path + (recursive ? "/**" : "")
+    }
+    compilerConfigurationTag?.excludeFromCompile?.getAt(0)?.file?.each {Node fileTag ->
+      def path = PathUtil.toSystemIndependentPath(projectMacroExpander.expandMacros(IdeaProjectLoadingUtil.pathFromUrl(fileTag."@url")));
+      excludePatterns << path
+    }
+    if (!excludePatterns.isEmpty()) {
+      project.props["compiler.excludes"] = excludePatterns
     }
   }
 
