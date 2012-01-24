@@ -65,6 +65,9 @@ class KotlinModuleBuilder implements ModuleBuilder {
                 arg(value: "-jar")
                 arg(value: jarName)
 
+                arg(value: "-stdlib")
+                arg(value: "$kotlinHome/lib/kotlin-runtime.jar")
+
                 classpath() {
                     fileset(dir: "$kotlinHome/lib") {
                         include(name: "*.jar")
