@@ -13,6 +13,7 @@ class KotlinModuleBuilder implements ModuleBuilder {
     def processModule(ModuleBuildState state, ModuleChunk moduleChunk, Project project) {
         // TODO: examples do not compile %)
         if ("examples" == moduleChunk.getName()) return
+        if ("example-vfs" == moduleChunk.getName()) return
 
         List<File> kotlinFiles = []
         state.sourceRoots.each {
