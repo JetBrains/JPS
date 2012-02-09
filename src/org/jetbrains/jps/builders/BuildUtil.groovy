@@ -10,16 +10,13 @@ class BuildUtil {
     if (path == null) return
     int attempts = 10;
     while (attempts-- > 0) {
-      try {
-        project.binding.ant.delete(dir: path)
+      boolean lastAttempt = attempts == 0
+      project.binding.ant.delete(dir: path, quiet: !lastAttempt)
+      if (!new File(path).exists()) {
         return
-      } catch (Exception e) {
-        if (attempts == 0) {
-          throw e;
-        }
-        project.info("Failed to delete: $e, trying again")
-        Thread.sleep(100)
       }
+      project.info("Failed to delete $path, trying again")
+      Thread.sleep(100)
     }
   }
 
