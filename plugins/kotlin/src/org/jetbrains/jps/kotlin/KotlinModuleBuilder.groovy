@@ -42,6 +42,7 @@ class KotlinModuleBuilder implements ModuleBuilder {
 
             state.sourceRoots.each {
                 builder.append("sources += \"${path(it)}\"\n")
+                builder.append("classpath += \"${path(it)}\"\n") // To find java files in same compilation scope
             }
 
             state.classpath.each {
