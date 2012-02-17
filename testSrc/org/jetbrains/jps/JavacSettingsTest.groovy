@@ -31,7 +31,16 @@ class JavacSettingsTest extends JpsBuildTestCase {
   }
 
   public void test_javac_excludes_classes() throws Exception {
+    doTestJavacExcludes(false)
+  }
+
+  public void test_in_process_javac_excludes_classes() throws Exception {
+    doTestJavacExcludes(true)
+  }
+
+  private void doTestJavacExcludes(final boolean useInProcessJavac) {
     Project project = loadProject("testData/javacExcludes/javacExcludes.ipr", [:]);
+    project.builder.useInProcessJavac = useInProcessJavac
     project.clean();
     project.makeAll(); // must compile without errors
   }

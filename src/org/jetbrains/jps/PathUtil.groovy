@@ -7,7 +7,12 @@ class PathUtil {
   static String toSystemIndependentPath(String path) {
     return path.replace('\\', '/')
   }
-  
+
+  static String toSystemDependentPath(String path) {
+    char s = '/'
+    return path.replace(s, File.separatorChar)
+  }
+
   static String relativeOrAbsolute(String basePath, String absPath) {
     def nb = normalizePath(basePath);
     def na = normalizePath(absPath);

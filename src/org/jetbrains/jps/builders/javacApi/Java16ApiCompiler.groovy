@@ -7,8 +7,9 @@ import org.jetbrains.jps.Project
 import org.jetbrains.jps.Sdk
 import org.jetbrains.jps.builders.JavaFileCollector
 import javax.tools.*
+import org.jetbrains.jps.PathUtil
 
- /**
+/**
  * @author nik
  */
 class Java16ApiCompiler {
@@ -44,8 +45,9 @@ class Java16ApiCompiler {
 
     List<File> filesToCompile = []
     Set<File> excluded = state.excludes.collect { new File(it.toString()) }
+    def compilerExcludes = chunk.getProject().compilerExcludes
     state.sourceRoots.each {
-      JavaFileCollector.collectRecursively(new File(it.toString()), filesToCompile, excluded)
+      JavaFileCollector.collectRecursively(new File(PathUtil.normalizePath(it).toString()), filesToCompile, excluded, compilerExcludes)
     }
 
     if (filesToCompile.size() > 0) {

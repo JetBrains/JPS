@@ -1,5 +1,7 @@
 package org.jetbrains.jps.builders;
 
+import org.jetbrains.jps.CompilerExcludes;
+
 import java.io.File;
 import java.util.List;
 import java.util.Set;
@@ -8,7 +10,9 @@ import java.util.Set;
  * @author nik
  */
 public class JavaFileCollector {
-  public static void collectRecursively(File file, List<File> result, Set<File> excluded) {
+  public static void collectRecursively(File file, List<File> result, Set<File> excluded, CompilerExcludes compilerExcludes) {
+    if (compilerExcludes.isExcluded(file)) return;
+
     if (file.isDirectory()) {
       File current = file;
       while (current != null) {
@@ -19,7 +23,7 @@ public class JavaFileCollector {
       final File[] children = file.listFiles();
       if (children != null) {
         for (File child : children) {
-          collectRecursively(child, result, excluded);
+          collectRecursively(child, result, excluded, compilerExcludes);
         }
       }
       return;
