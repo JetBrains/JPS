@@ -461,6 +461,7 @@ public class IdeaProjectLoader {
       case "JDK_1_5": return "1.5"
       case "JDK_1_6": return "1.6"
       case "JDK_1_7": return "1.7"
+      case "JDK_1_8": return "1.8"
     }
 
     return "1.6"
