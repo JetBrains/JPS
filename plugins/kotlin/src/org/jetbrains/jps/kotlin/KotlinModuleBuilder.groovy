@@ -13,6 +13,7 @@ class KotlinModuleBuilder implements ModuleBuilder {
     def processModule(ModuleBuildState state, ModuleChunk moduleChunk, Project project) {
         // TODO: examples do not compile %)
         if ("examples" == moduleChunk.getName()) return
+        if ("example-vfs" == moduleChunk.getName()) return
 
         List<File> kotlinFiles = []
         state.sourceRoots.each {
@@ -41,6 +42,7 @@ class KotlinModuleBuilder implements ModuleBuilder {
 
             state.sourceRoots.each {
                 builder.append("sources += \"${path(it)}\"\n")
+                builder.append("classpath += \"${path(it)}\"\n") // To find java files in same compilation scope
             }
 
             state.classpath.each {
@@ -64,6 +66,9 @@ class KotlinModuleBuilder implements ModuleBuilder {
 
                 arg(value: "-jar")
                 arg(value: jarName)
+
+                arg(value: "-stdlib")
+                arg(value: "$kotlinHome/lib/kotlin-runtime.jar")
 
                 classpath() {
                     fileset(dir: "$kotlinHome/lib") {

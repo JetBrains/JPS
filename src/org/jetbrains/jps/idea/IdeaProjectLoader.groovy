@@ -182,10 +182,12 @@ public class IdeaProjectLoader {
       def path = PathUtil.toSystemIndependentPath(projectMacroExpander.expandMacros(IdeaProjectLoadingUtil.pathFromUrl(dirTag."@url")));
       def recursive = Boolean.valueOf(dirTag."@includeSubdirectories");
       excludePatterns << path + (recursive ? "/**" : "")
+      project.compilerExcludes.addExcludedDirectory(new File(PathUtil.toSystemDependentPath(path)), recursive)
     }
     compilerConfigurationTag?.excludeFromCompile?.getAt(0)?.file?.each {Node fileTag ->
       def path = PathUtil.toSystemIndependentPath(projectMacroExpander.expandMacros(IdeaProjectLoadingUtil.pathFromUrl(fileTag."@url")));
       excludePatterns << path
+      project.compilerExcludes.addExcludedFile(new File(PathUtil.toSystemDependentPath(path)))
     }
     if (!excludePatterns.isEmpty()) {
       project.props["compiler.excludes"] = excludePatterns

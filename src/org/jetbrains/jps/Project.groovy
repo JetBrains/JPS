@@ -28,6 +28,7 @@ class Project {
   final Map<String, Library> libraries = [:]
   final Map<String, Artifact> artifacts = [:]
   final Map<String, RunConfiguration> runConfigurations = [:]
+  final CompilerExcludes compilerExcludes = new CompilerExcludes()
 
   String projectCharset; // contains project charset, if not specified default charset will be used (used by compilers)
 
