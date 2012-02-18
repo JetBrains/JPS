@@ -11,15 +11,6 @@
     <orderEntry type="module" module-name="jps" />
     <orderEntry type="library" name="Groovy" level="project" />
     <orderEntry type="module" module-name="javaee" />
-    <orderEntry type="module-library">
-      <library>
-        <CLASSES>
-          <root url="jar://$IDEA_HOME$/lib/junit.jar!/" />
-        </CLASSES>
-        <JAVADOC />
-        <SOURCES />
-      </library>
-    </orderEntry>
   </component>
 </module>
 
