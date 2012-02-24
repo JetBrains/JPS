@@ -46,6 +46,23 @@ class JavaAppLauncherTest extends JpsBuildTestCase {
     })
   }
 
+  public void test_run_ant_target_before_launch() {
+    runAndAssertOutput("MainClass & Ant", null, { output ->
+      assertTrue(output, output.indexOf("arg1" + System.getProperty("line.separator")) != -1)
+      assertTrue(output, output.indexOf("arg2") != -1)
+      assertTrue(output, output.indexOf("example2 called!") != -1)
+      assertTrue(output, output.indexOf("plugins" + File.separator + "appLauncher" + File.separator + "testData" + File.separator + "main-class-run-conf") != -1)
+    })
+  }
+
+  public void test_run_ant_target_before_launch_target_not_specified() {
+    runAndAssertOutput("MainClass & Ant (target not specified)", null, { output ->
+      assertTrue(output, output.indexOf("arg1" + System.getProperty("line.separator")) != -1)
+      assertTrue(output, output.indexOf("arg2") != -1)
+      assertTrue(output, output.indexOf("example2 called!") == -1)
+    })
+  }
+
   private void runAndAssertOutput(String runConfName, Closure launcherInitializer, Closure assertions) {
     Project project = loadProject("plugins/appLauncher/testData/main-class-run-conf", [:]);
 

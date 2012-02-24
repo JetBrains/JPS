@@ -3,6 +3,7 @@ package org.jetbrains.jps.runConf.java
 import org.jetbrains.jps.ClasspathKind
 import org.jetbrains.jps.RunConfiguration
 import org.jetbrains.jps.runConf.RunConfigurationLauncherService
+import org.jetbrains.jps.idea.IdeaProjectLoadingUtil
 
 /**
  * This launcher is able can be used to start Java main class.
@@ -64,6 +65,47 @@ public abstract class JavaBasedRunConfigurationLauncher extends RunConfiguration
     mySystemProperties.putAll(props);
   }
 
+  @Override
+  void beforeStart(RunConfiguration runConf) {
+    super.beforeStart(runConf)
+
+    if (runConf.node.method == null) return;
+
+    def antOption = null;
+    runConf.node.method.option.each{ opt ->
+      def name = opt.'@name';
+      def enabled = opt.'@enabled';
+      if ("true".equals(enabled) && 'AntTarget'.equals(name)) {
+        antOption = opt;
+      }
+    }
+
+    if (antOption == null) return;
+
+    def antfile = antOption.'@antfile';
+    if (antfile == null) return;
+    antfile = runConf.macroExpander.expandMacros(IdeaProjectLoadingUtil.pathFromUrl(antfile));
+
+    def target = antOption.'@target';
+
+    def project = runConf.project;
+    def ant = project.binding.ant;
+
+    def attrs = [:];
+    attrs['antfile'] = antfile;
+    attrs["dir"] = runConf.workingDir;
+    if (target != null) {
+      attrs['target'] = target;
+    }
+    if (myOutputFile != null) {
+      attrs["output"] = myOutputFile.absolutePath;
+    }
+
+    project.info("Starting Ant before launching run configuration $runConf.name ...");
+    ant.ant(attrs);
+  }
+
+
   final void startInternal(RunConfiguration runConf) {
     def project = runConf.project;
 
@@ -99,6 +141,10 @@ public abstract class JavaBasedRunConfigurationLauncher extends RunConfiguration
     if (myErrorFile != null) {
       attrs["error"] = myErrorFile.absolutePath;
     }
+
+    if (myOutputFile != null || myErrorFile != null) {
+      attrs["append"] = 'true';
+    };
 
     def runConfRuntimeCpFile = createTempFile(runConfRuntimeCp);
     def mainClassCpFile = createTempFile(getMainClassClasspath(runConf));
