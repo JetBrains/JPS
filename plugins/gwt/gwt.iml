@@ -11,6 +11,7 @@
     <orderEntry type="module" module-name="jps" />
     <orderEntry type="library" name="Groovy" level="project" />
     <orderEntry type="module" module-name="javaee" />
+    <orderEntry type="library" scope="TEST" name="JUnit" level="project" />
   </component>
 </module>
 
