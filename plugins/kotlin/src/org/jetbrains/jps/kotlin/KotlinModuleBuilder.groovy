@@ -58,7 +58,7 @@ class KotlinModuleBuilder implements ModuleBuilder {
             moduleFile.text = builder.toString()
 
             def jarName = "${state.targetFolder}/kt.jar"
-            ant.java(classname: "org.jetbrains.jet.cli.KotlinCompiler", fork: "true") {
+            ant.java(classname: "org.jetbrains.jet.cli.jvm.K2JVMCompiler", fork: "true") {
                 jvmarg(line: "-ea -Xmx300m -XX:MaxPermSize=200m")
 
                 arg(value: "-module")
