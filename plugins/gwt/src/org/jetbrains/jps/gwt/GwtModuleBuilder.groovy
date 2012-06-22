@@ -72,6 +72,7 @@ class GwtModuleBuilder implements ModuleBuilder {
           state.classpath.each {
             pathelement(location: it)
           }
+          pathelement(location: state.targetFolder)
         }
         arg(value: "-war")
         arg(value: outputDir)
