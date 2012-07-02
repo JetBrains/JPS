@@ -36,14 +36,7 @@ module("antLayout") {
 }
 
 target('default' : 'Default target') {
-  def cleanDisabledPropertyName = "clean.before.build.disabled"
-  if (Boolean.parseBoolean(project.getPropertyIfDefined(cleanDisabledPropertyName))) {
-    project.info("Clean was not performed since \"$cleanDisabledPropertyName\" property is set")
-  }
-  else {
-    project.clean()
-  }
-
+  project.clean()
   project.makeAll()
 
   layout("${project.targetFolder}/deploy") {
