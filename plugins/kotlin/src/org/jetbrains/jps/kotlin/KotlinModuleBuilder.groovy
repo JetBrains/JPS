@@ -48,6 +48,7 @@ class KotlinModuleBuilder implements ModuleBuilder {
             state.classpath.each {
                 if (new File(it).exists()) {
                     builder.append("classpath += \"${path(it)}\"\n")
+                    println("[cp] " + path(it)) // TODO remove this debug output
                 }
             }
 
@@ -67,8 +68,7 @@ class KotlinModuleBuilder implements ModuleBuilder {
                 arg(value: "-jar")
                 arg(value: jarName)
 
-                arg(value: "-stdlib")
-                arg(value: "$kotlinHome/lib/kotlin-runtime.jar")
+                arg(value: "-noStdlib")
 
                 classpath() {
                     fileset(dir: "$kotlinHome/lib") {
