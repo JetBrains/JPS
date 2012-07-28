@@ -1,5 +1,6 @@
 package org.jetbrains.jps.kotlin
 
+import org.jetbrains.jps.Module
 import org.jetbrains.jps.ModuleBuilder
 import org.jetbrains.jps.ModuleBuildState
 import org.jetbrains.jps.ModuleChunk
@@ -26,14 +27,22 @@ class KotlinModuleBuilder implements ModuleBuilder {
             String kotlinHome = project.getPropertyIfDefined("kotlinHome")
 
             if (kotlinHome == null) {
-                ant.fail("kotlinHome is not defined")
+                kotlinHome = detectKotlinHome(state.classpath)
+            }
+
+            if (kotlinHome == null) {
+                ant.fail("Failed to detect Kotlin SDK for " + getDescription(moduleChunk) + ". Please either specify the SDK or set \"kotlinHome\" system property.")
             }
 
             if (!new File(kotlinHome, "lib/kotlin-compiler.jar").exists()) {
-                ant.fail("'$kotlinHome' is not a valid Kotlin compiler. Can't find lib/kotlin-compiler.jar there")
+                ant.fail("\"$kotlinHome\" is not a valid Kotlin SDK. Can't find \"lib/kotlin-compiler.jar\" there.")
             }
 
             boolean debug = Boolean.parseBoolean(project.getPropertyIfDefined("kotlin.debug"))
+
+            if (debug) {
+                println("Following Kotlin SDK was detected: $kotlinHome")
+            }
 
             ant.mkdir(dir: state.targetFolder)
 
@@ -91,7 +100,7 @@ class KotlinModuleBuilder implements ModuleBuilder {
             ant.unjar(src: jarName, dest: state.targetFolder)
         }
     }
-    
+
     String path(String raw) {
         return raw.replace('\\', '/')
     }
@@ -102,5 +111,40 @@ class KotlinModuleBuilder implements ModuleBuilder {
                 answer.add(it)
             }
         }
+    }
+
+    String detectKotlinHome(List<String> classpath) {
+        for (String path : classpath) {
+            File file = new File(path)
+            if (file.getName().equals("kotlin-compiler.jar")) {
+                File libDir = file.getParentFile()
+                if (libDir != null) {
+                    File kotlinHome = libDir.getParentFile()
+                    if (kotlinHome != null) {
+                        return kotlinHome.getAbsolutePath()
+                    }
+                }
+            }
+        }
+        return null
+    }
+
+    String getDescription(ModuleChunk chunk) {
+        def modules = chunk.modules
+
+        StringBuilder b = new StringBuilder()
+
+        b << "module"
+        if (modules.size() > 1) b << "s"
+        b << " \""
+
+        elements.eachWithIndex { Module it, int index ->
+            if (index > 0) b << "\", \""
+            b << it.name
+        }
+
+        b << "\""
+
+        b.toString()
     }
 }
