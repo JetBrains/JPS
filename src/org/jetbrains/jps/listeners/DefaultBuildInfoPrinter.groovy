@@ -14,4 +14,7 @@ class DefaultBuildInfoPrinter implements BuildInfoPrinter {
     project.error(messages)
   }
 
+  def printCompilationStart(Project project, String compilerName) {}
+
+  def printCompilationFinish(Project project, String compilerName) {}
 }

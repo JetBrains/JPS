@@ -71,6 +71,8 @@ class KotlinModuleBuilder implements ModuleBuilder {
             def moduleFile = new File(state.targetFolder, "module.kts")
             moduleFile.text = builder.toString()
 
+            project.builder.buildInfoPrinter.printCompilationStart(project, "kotlinc")
+
             def jarName = "${state.targetFolder}/kt.jar"
             ant.java(classname: "org.jetbrains.jet.cli.jvm.K2JVMCompiler", fork: "true") {
                 jvmarg(line: "-ea -Xmx300m -XX:MaxPermSize=200m" + (debug ? " -Dkotlin.print.cmd.args=true" : ""))
@@ -93,6 +95,8 @@ class KotlinModuleBuilder implements ModuleBuilder {
                     }
                 }
             }
+
+            project.builder.buildInfoPrinter.printCompilationFinish(project, "kotlinc")
 
             moduleFile.delete();
 

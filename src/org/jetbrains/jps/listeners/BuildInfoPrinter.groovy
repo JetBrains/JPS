@@ -11,4 +11,8 @@ public interface BuildInfoPrinter {
 
   def printCompilationErrors(Project project, String compilerName, String messages)
 
+  def printCompilationStart(Project project, String compilerName)
+
+  def printCompilationFinish(Project project, String compilerName)
+
 }

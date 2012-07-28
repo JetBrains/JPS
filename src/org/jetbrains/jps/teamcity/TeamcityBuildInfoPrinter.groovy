@@ -49,4 +49,12 @@ class TeamcityBuildInfoPrinter implements BuildInfoPrinter {
     project.info("##teamcity[message text='$escapedOutput' status='ERROR']");
     project.info("##teamcity[compilationFinished compiler='$escapedCompiler']");
   }
+
+  def printCompilationStart(Project project, String compilerName) {
+    project.info("##teamcity[compilationStarted compiler='${escape(compilerName)}']");
+  }
+
+  def printCompilationFinish(Project project, String compilerName) {
+    project.info("##teamcity[compilationFinished compiler='${escape(compilerName)}']");
+  }
 }
