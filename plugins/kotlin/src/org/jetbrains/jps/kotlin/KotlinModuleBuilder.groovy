@@ -33,6 +33,8 @@ class KotlinModuleBuilder implements ModuleBuilder {
                 ant.fail("'$kotlinHome' is not a valid Kotlin compiler. Can't find lib/kotlin-compiler.jar there")
             }
 
+            boolean debug = Boolean.parseBoolean(project.getPropertyIfDefined("kotlin.debug"))
+
             ant.mkdir(dir: state.targetFolder)
 
             StringBuilder builder = new StringBuilder()
@@ -48,6 +50,9 @@ class KotlinModuleBuilder implements ModuleBuilder {
             state.classpath.each {
                 if (new File(it).exists()) {
                     builder.append("classpath += \"${path(it)}\"\n")
+                    if (debug) {
+                        println("[cp] " + path(it))
+                    }
                 }
             }
 
@@ -59,7 +64,7 @@ class KotlinModuleBuilder implements ModuleBuilder {
 
             def jarName = "${state.targetFolder}/kt.jar"
             ant.java(classname: "org.jetbrains.jet.cli.jvm.K2JVMCompiler", fork: "true") {
-                jvmarg(line: "-ea -Xmx300m -XX:MaxPermSize=200m")
+                jvmarg(line: "-ea -Xmx300m -XX:MaxPermSize=200m" + (debug ? " -Dkotlin.print.cmd.args=true" : ""))
 
                 arg(value: "-module")
                 arg(value: "${moduleFile.absolutePath}")
@@ -68,7 +73,10 @@ class KotlinModuleBuilder implements ModuleBuilder {
                 arg(value: jarName)
 
                 arg(value: "-noStdlib")
-                arg(value: "-noRtJar")
+
+                if (debug) {
+                    arg(value: "-verbose")
+                }
 
                 classpath() {
                     fileset(dir: "$kotlinHome/lib") {
