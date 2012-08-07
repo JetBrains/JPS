@@ -68,12 +68,10 @@ final class Jps {
           else {
             name = (String)param0;
           }
-          if (duplicate != null) {
-            binding.ant.jar(name: name, compress: project.builder.compressJars, duplicate: duplicate, args[1])
+          if (duplicate == null) {
+            duplicate = "fail"
           }
-          else {
-            binding.ant.jar(name: name, compress: project.builder.compressJars, args[1])
-          }
+          binding.ant.jar(name: name, compress: project.builder.compressJars, duplicate: duplicate, args[1])
         }
         else {
           project.error("unexpected number of parameters for 'jar' task: $args.length")
