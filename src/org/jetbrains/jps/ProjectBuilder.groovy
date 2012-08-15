@@ -170,6 +170,14 @@ class ProjectBuilder {
     makeModuleWithDependencies(module, true);
   }
 
+  def buildModule(String moduleName) {
+    makeModule(project.modules[moduleName])
+  }
+
+  def buildModuleTests(String moduleName) {
+    makeModuleTests(project.modules[moduleName])
+  }
+
   def deleteTempFiles() {
     tempFileContainer.clean()
   }
