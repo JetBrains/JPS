@@ -10,6 +10,7 @@ final class Jps {
   def Jps(GantBinding binding) {
     Project project = new Project(binding)
     binding.setVariable("project", project)
+    binding.setVariable("projectBuilder", project.builder)
     binding.setVariable("module", {String name, Closure initializer ->
       return project.createModule(name, initializer)
     })

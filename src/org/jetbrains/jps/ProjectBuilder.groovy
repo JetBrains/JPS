@@ -1,5 +1,6 @@
 package org.jetbrains.jps
 
+import org.apache.tools.ant.BuildException
 import org.codehaus.gant.GantBinding
 import org.jetbrains.jps.idea.OwnServiceLoader
 import org.jetbrains.jps.listeners.BuildInfoPrinter
@@ -61,10 +62,63 @@ class ProjectBuilder {
     [preTasksBuilder, sourceGeneratingBuilders, sourceModifyingBuilders, translatingBuilders, weavingBuilders, postTasksBuilder].flatten()
   }
 
-  public def clean() {
+  def setTargetFolder(String targetFolder) {
+    project.targetFolder = targetFolder
+  }
+
+  def setDryRun(boolean dryRun) {
+    project.dryRun = dryRun
+  }
+
+  def cleanOutput() {
+    if (!project.dryRun) {
+      def targetFolder = project.targetFolder
+      if (targetFolder != null) {
+        stage("Cleaning ${targetFolder}")
+        BuildUtil.deleteDir(project, targetFolder)
+      }
+      else {
+        stage("Cleaning output folders for ${project.modules.size()} modules")
+        project.modules.values().each {
+          BuildUtil.deleteDir(project, it.outputPath)
+          BuildUtil.deleteDir(project, it.testOutputPath)
+        }
+        stage("Cleaning output folders for ${project.artifacts.size()} artifacts")
+        project.artifacts.values().each {
+          project.artifactBuilder.cleanOutput(it)
+        }
+      }
+    }
+    else {
+      stage("Cleaning skipped as we're running dry")
+    }
+    clean();
+  }
+
+  def clean() {
     compiledChunks.clear()
     compiledTestChunks.clear()
     cachedClasspaths.clear();
+  }
+
+  def error(String message) {
+    throw new BuildException(message)
+  }
+
+  def warning(String message) {
+    binding.ant.project.log(message, org.apache.tools.ant.Project.MSG_WARN)
+  }
+
+  def stage(String message) {
+    buildInfoPrinter.printProgressMessage(project, message)
+  }
+
+  def info(String message) {
+    binding.ant.project.log(message, org.apache.tools.ant.Project.MSG_INFO)
+  }
+
+  def debug(String message) {
+    binding.ant.project.log(message, org.apache.tools.ant.Project.MSG_DEBUG)
   }
 
   public def buildAll() {

@@ -1,6 +1,5 @@
 package org.jetbrains.jps
 
-import org.apache.tools.ant.BuildException
 import org.codehaus.gant.GantBinding
 import org.jetbrains.jps.artifacts.Artifact
 import org.jetbrains.jps.artifacts.ArtifactBuilder
@@ -8,8 +7,6 @@ import org.jetbrains.jps.resolvers.LibraryResolver
 import org.jetbrains.jps.resolvers.ModuleResolver
 import org.jetbrains.jps.resolvers.PathEntry
 import org.jetbrains.jps.resolvers.Resolver
-import org.jetbrains.jps.builders.BuildUtil
-
 /**
  * @author max
  */
@@ -112,23 +109,23 @@ class Project {
   }
 
   def error(String message) {
-    throw new BuildException(message)
+    builder.error(message)
   }
 
   def warning(String message) {
-    binding.ant.project.log(message, org.apache.tools.ant.Project.MSG_WARN)
+    builder.warning(message)
   }
 
   def stage(String message) {
-    builder.buildInfoPrinter.printProgressMessage(this, message)
+    builder.stage(message)
   }
 
   def info(String message) {
-    binding.ant.project.log(message, org.apache.tools.ant.Project.MSG_INFO)
+    builder.info(message)
   }
 
   def debug(String message) {
-    binding.ant.project.log(message, org.apache.tools.ant.Project.MSG_DEBUG)
+    builder.debug(message)
   }
 
   def makeAll() {
@@ -160,27 +157,7 @@ class Project {
   }
 
   def clean() {
-    if (!dryRun) {
-      if (targetFolder != null) {
-        stage("Cleaning $targetFolder")
-        BuildUtil.deleteDir(this, targetFolder)
-      }
-      else {
-        stage("Cleaning output folders for ${modules.size()} modules")
-        modules.values().each {
-          BuildUtil.deleteDir(this, it.outputPath)
-          BuildUtil.deleteDir(this, it.testOutputPath)
-        }
-        stage("Cleaning output folders for ${artifacts.size()} artifacts")
-        artifacts.values().each {
-          artifactBuilder.cleanOutput(it)
-        }
-      }
-    }
-    else {
-      stage("Cleaning skipped as we're running dry")
-    }
-    builder.clean()
+    builder.cleanOutput()
   }
 
   def deleteTempFiles() {
