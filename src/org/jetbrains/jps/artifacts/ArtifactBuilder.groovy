@@ -88,6 +88,8 @@ class ArtifactBuilder {
 
   private def compileModulesAndBuildArtifacts(List<Artifact> artifacts) {
     Set<Module> modules = [] as Set
+    Set<Module> testModules = [] as Set
+
     artifacts*.rootElement*.process(project) {LayoutElement element ->
       if (element instanceof ModuleOutputElement) {
         Module module = project.modules[element.moduleName]
@@ -95,9 +97,17 @@ class ArtifactBuilder {
           modules << module
         }
       }
+      else if (element instanceof ModuleTestOutputElement) {
+        Module module = project.modules[element.moduleName]
+        if (module != null) {
+          testModules << module
+        }
+      }
       return true
     }
+
     modules.each { it.make() }
+    testModules.each { it.makeTests() }
 
     artifacts.each {
       doBuildArtifact(it)
