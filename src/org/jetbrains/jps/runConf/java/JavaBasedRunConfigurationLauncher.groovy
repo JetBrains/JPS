@@ -168,6 +168,8 @@ public abstract class JavaBasedRunConfigurationLauncher extends RunConfiguration
    * */
   private static List<String> splitCommandArgumentsAndUnquote(String line) {
     final ArrayList<String> result = new ArrayList<String>();
+    if (line == null) return result;
+
     final StringBuilder builder = new StringBuilder();
     boolean inQuotes = false;
     for (int i = 0; i < line.length(); i++) {
