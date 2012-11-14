@@ -40,7 +40,7 @@ class Library extends LazyInitializeableObject implements ClasspathItem {
       initializer.setResolveStrategy Closure.DELEGATE_FIRST
       initializer.call()
 
-      def wrongProperties = ["classpath", "src"] as Set
+      def wrongProperties = ["classpath", "src", "annotationRoots"] as Set
       meta.getProperties().each {String key, Object value ->
         if (!wrongProperties.contains(key)) {
           props[key] = value
