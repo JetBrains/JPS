@@ -65,6 +65,18 @@ class KotlinModuleBuilder implements ModuleBuilder {
                 }
             }
 
+            project.libraries.each {
+                it.value.annotations.each {
+                    builder.append("annotationsPath += \"${path(it)}\"\n")
+                }
+            }
+
+            project.globalLibraries.each {
+                it.value.annotations.each {
+                    builder.append("annotationsPath += \"${path(it)}\"\n")
+                }
+            }
+
             builder.append("}\n")
             builder.append("}\n")
 

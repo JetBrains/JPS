@@ -295,6 +295,10 @@ public class IdeaProjectLoader {
       libraryTag.SOURCES.root.each {Node rootTag ->
         src macroExpander.expandMacros(rootTag.@url)
       }
+
+      libraryTag.ANNOTATIONS.root.each {Node rootTag ->
+          annotationRoots IdeaProjectLoadingUtil.pathFromUrl(macroExpander.expandMacros(rootTag.@url))
+      }
     }
   }
 
