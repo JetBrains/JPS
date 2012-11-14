@@ -1,0 +1,8 @@
+<root>
+    <item name='Main java.lang.String foo(java.lang.String) 0'>
+        <annotation name='org.jetbrains.annotations.Nullable'/>
+    </item>
+    <item name='Main java.lang.String foo(java.lang.String)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+</root>

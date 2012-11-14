@@ -9,6 +9,7 @@ class Library extends LazyInitializeableObject implements ClasspathItem {
 
   List classpath = []
   List sourceRoots = []
+  List annotationRoots = []
 
   private Map<String, Object> props = [:]
 
@@ -29,6 +30,10 @@ class Library extends LazyInitializeableObject implements ClasspathItem {
 
       meta.src = {Object[] arg ->
         arg.each { sourceRoots << it }
+      }
+
+      meta.annotationRoots = {Object[] arg ->
+        arg.each { annotationRoots << it }
       }
 
       initializer.delegate = meta
