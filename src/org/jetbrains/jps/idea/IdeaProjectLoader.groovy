@@ -297,7 +297,7 @@ public class IdeaProjectLoader {
       }
 
       libraryTag.ANNOTATIONS.root.each {Node rootTag ->
-          annotationRoots IdeaProjectLoadingUtil.pathFromUrl(macroExpander.expandMacros(rootTag.@url))
+          annotationRoots IdeaPathUtil.pathFromUrl(macroExpander.expandMacros(rootTag.@url))
       }
     }
   }
