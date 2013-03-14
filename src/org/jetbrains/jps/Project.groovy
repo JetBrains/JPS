@@ -64,6 +64,10 @@ class Project implements IProject {
     return this.projectSdk;
   }
 
+  Collection<IModule> getAllModules() {
+    return new ArrayList<IModule>(this.modules.values());
+  }
+
   def Module createModule(String name, Closure initializer) {
     Module existingModule = modules[name]
     if (existingModule != null) error("Module ${name} already exists")

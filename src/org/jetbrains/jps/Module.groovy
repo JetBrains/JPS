@@ -75,6 +75,20 @@ class Module extends LazyInitializeableObject implements IModule, ClasspathItem 
     return this.basePath;
   }
 
+  List<String> getModuleOutputFolders(boolean includeTests) {
+    return getClasspathRoots(includeTests ? ClasspathKind.TEST_COMPILE : ClasspathKind.PRODUCTION_COMPILE);
+  }
+
+  List<IModule> getTestModuleDependencies() {
+    def result = new ArrayList<IModule>();
+    getClasspath(ClasspathKind.TEST_COMPILE).each {
+      if (it instanceof Module) {
+        result.add(it);
+      }
+    };
+    return result;
+  }
+
   def String toString() {
     return "module ${name}"
   }

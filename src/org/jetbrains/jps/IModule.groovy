@@ -10,4 +10,8 @@ public interface IModule {
   List<String> getTestRuntimeClasspath();
 
   String getBasePath();
+
+  List<String> getModuleOutputFolders(boolean includeTests);
+
+  List<IModule> getTestModuleDependencies();
 }

@@ -13,6 +13,8 @@ public interface IProject {
 
   List<String> getTestRuntimeClasspath();
 
+  Collection<IModule> getAllModules();
+
   def info(String text);
 
   def warning(String text);
