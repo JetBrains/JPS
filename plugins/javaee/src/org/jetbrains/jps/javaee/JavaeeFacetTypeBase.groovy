@@ -4,8 +4,7 @@ import org.jetbrains.jps.MacroExpander
 import org.jetbrains.jps.Module
 import org.jetbrains.jps.idea.Facet
 import org.jetbrains.jps.idea.FacetTypeService
-
-import org.jetbrains.jps.idea.IdeaProjectLoadingUtil
+import org.jetbrains.jps.idea.IdeaPathUtil
 
 /**
  * @author nik
@@ -35,6 +34,6 @@ public abstract class JavaeeFacetTypeBase extends FacetTypeService {
   }
 
   def urlToPath(String url, MacroExpander macroExpander) {
-    return macroExpander.expandMacros(IdeaProjectLoadingUtil.pathFromUrl(url))
+    return macroExpander.expandMacros(IdeaPathUtil.pathFromUrl(url))
   }
 }

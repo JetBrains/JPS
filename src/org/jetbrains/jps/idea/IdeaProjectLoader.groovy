@@ -179,13 +179,13 @@ public class IdeaProjectLoader {
   private def processCompilerExcludes(Node compilerConfigurationTag) {
     def excludePatterns = [];
     compilerConfigurationTag?.excludeFromCompile?.getAt(0)?.directory?.each {Node dirTag ->
-      def path = PathUtil.toSystemIndependentPath(projectMacroExpander.expandMacros(IdeaProjectLoadingUtil.pathFromUrl(dirTag."@url")));
+      def path = PathUtil.toSystemIndependentPath(projectMacroExpander.expandMacros(IdeaPathUtil.pathFromUrl(dirTag."@url")));
       def recursive = Boolean.valueOf(dirTag."@includeSubdirectories");
       excludePatterns << path + (recursive ? "/**" : "")
       project.compilerExcludes.addExcludedDirectory(new File(PathUtil.toSystemDependentPath(path)), recursive)
     }
     compilerConfigurationTag?.excludeFromCompile?.getAt(0)?.file?.each {Node fileTag ->
-      def path = PathUtil.toSystemIndependentPath(projectMacroExpander.expandMacros(IdeaProjectLoadingUtil.pathFromUrl(fileTag."@url")));
+      def path = PathUtil.toSystemIndependentPath(projectMacroExpander.expandMacros(IdeaPathUtil.pathFromUrl(fileTag."@url")));
       excludePatterns << path
       project.compilerExcludes.addExcludedFile(new File(PathUtil.toSystemDependentPath(path)))
     }
@@ -212,7 +212,7 @@ public class IdeaProjectLoader {
       project.info("Project SDK '$sdkName' is not defined. Embedded javac will be used")
     }
     def outputTag = componentTag?.output?.getAt(0)
-    String outputPath = outputTag != null ? IdeaProjectLoadingUtil.pathFromUrl(outputTag.'@url') : null
+    String outputPath = outputTag != null ? IdeaPathUtil.pathFromUrl(outputTag.'@url') : null
     projectOutputPath = outputPath != null && outputPath.length() > 0 ? projectMacroExpander.expandMacros(outputPath) : null
     project.projectSdk = sdk
     projectLanguageLevel = componentTag?."@languageLevel"
@@ -279,7 +279,7 @@ public class IdeaProjectLoader {
 
       libraryTag.CLASSES.root.each {Node rootTag ->
         def url = rootTag.@url
-        def path = macroExpander.expandMacros(IdeaProjectLoadingUtil.pathFromUrl(url))
+        def path = macroExpander.expandMacros(IdeaPathUtil.pathFromUrl(url))
         if (url in jarDirs.keySet()) {
           def paths = []
           collectChildJars(path, jarDirs[url], paths)
@@ -404,7 +404,7 @@ public class IdeaProjectLoader {
         def srcFolderExists = componentTag.content.sourceFolder[0] != null;
 
         componentTag.content.sourceFolder.each {Node folderTag ->
-          String path = moduleMacroExpander.expandMacros(IdeaProjectLoadingUtil.pathFromUrl(folderTag.@url))
+          String path = moduleMacroExpander.expandMacros(IdeaPathUtil.pathFromUrl(folderTag.@url))
           String prefix = folderTag.@packagePrefix
 
           if (folderTag.attribute("isTestSource") == "true") {
@@ -420,7 +420,7 @@ public class IdeaProjectLoader {
         }
 
         componentTag.content.excludeFolder.each {Node exTag ->
-          String path = moduleMacroExpander.expandMacros(IdeaProjectLoadingUtil.pathFromUrl(exTag.@url))
+          String path = moduleMacroExpander.expandMacros(IdeaPathUtil.pathFromUrl(exTag.@url))
           exclude path
         }
 
@@ -443,8 +443,8 @@ public class IdeaProjectLoader {
             currentModule.testOutputPath = PathUtil.toSystemIndependentPath(new File(new File(projectOutputPath, "test"), currentModuleName).absolutePath)
           }
           else {
-            currentModule.outputPath = moduleMacroExpander.expandMacros(IdeaProjectLoadingUtil.pathFromUrl(componentTag.output[0]?.@url))
-            currentModule.testOutputPath = moduleMacroExpander.expandMacros(IdeaProjectLoadingUtil.pathFromUrl(componentTag."output-test"[0]?.'@url'))
+            currentModule.outputPath = moduleMacroExpander.expandMacros(IdeaPathUtil.pathFromUrl(componentTag.output[0]?.@url))
+            currentModule.testOutputPath = moduleMacroExpander.expandMacros(IdeaPathUtil.pathFromUrl(componentTag."output-test"[0]?.'@url'))
             if (currentModule.testOutputPath == null) {
               currentModule.testOutputPath = currentModule.outputPath
             }

@@ -3,7 +3,7 @@ package org.jetbrains.jps
 /**
  * @author nik
  */
-class JavaSdk extends Sdk {
+class JavaSdk extends Sdk implements IJavaSdk {
   String jdkPath
 
   def JavaSdk(Project project, String name, String jdkPath, Closure initializer) {
@@ -17,5 +17,9 @@ class JavaSdk extends Sdk {
 
   String getJavaExecutable() {
     return jdkPath + File.separator + "bin" + File.separator + "java";
+  }
+
+  def getRuntimeRoots() {
+    return getClasspathRoots(ClasspathKind.TEST_RUNTIME);
   }
 }

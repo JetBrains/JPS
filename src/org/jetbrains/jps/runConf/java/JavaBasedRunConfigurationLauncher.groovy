@@ -1,9 +1,8 @@
 package org.jetbrains.jps.runConf.java
 
-import org.jetbrains.jps.ClasspathKind
 import org.jetbrains.jps.RunConfiguration
+import org.jetbrains.jps.idea.IdeaPathUtil
 import org.jetbrains.jps.runConf.RunConfigurationLauncherService
-import org.jetbrains.jps.idea.IdeaProjectLoadingUtil
 
 /**
  * This launcher is able can be used to start Java main class.
@@ -84,12 +83,12 @@ public abstract class JavaBasedRunConfigurationLauncher extends RunConfiguration
 
     def antfile = antOption.'@antfile';
     if (antfile == null) return;
-    antfile = runConf.macroExpander.expandMacros(IdeaProjectLoadingUtil.pathFromUrl(antfile));
+    antfile = runConf.macroExpander.expandMacros(IdeaPathUtil.pathFromUrl(antfile));
 
     def target = antOption.'@target';
 
     def project = runConf.project;
-    def ant = project.binding.ant;
+    def ant = project.ant;
 
     def attrs = [:];
     attrs['antfile'] = antfile;
@@ -109,7 +108,7 @@ public abstract class JavaBasedRunConfigurationLauncher extends RunConfiguration
   final void startInternal(RunConfiguration runConf) {
     def project = runConf.project;
 
-    def ant = project.binding.ant;
+    def ant = project.ant;
     def params = [
       mainClass: getMainClassName(runConf),
       jvmArgs: getJVMArguments(runConf),
@@ -120,7 +119,7 @@ public abstract class JavaBasedRunConfigurationLauncher extends RunConfiguration
     def runConfRuntimeCp = getRuntimeClasspath(runConf);
 
     def attrs = [:];
-    def sdk = module?.sdk ? module.sdk : project.projectSdk;
+    def sdk = module?.javaSdk ? module.javaSdk : project.javaSdk;
     if (sdk != null) {
       attrs["jvm"] = sdk.getJavaExecutable();
     } else {
@@ -245,14 +244,14 @@ public abstract class JavaBasedRunConfigurationLauncher extends RunConfiguration
   private Collection<String> getRuntimeClasspath(RunConfiguration runConf) {
     def runConfRuntimeCp = new LinkedHashSet<String>();
     if (runConf.module != null) {
-      runConfRuntimeCp.addAll(runConf.module.testRuntimeClasspath());
+      runConfRuntimeCp.addAll(runConf.module.getTestRuntimeClasspath());
     } else {
-      runConfRuntimeCp.addAll(runConf.project.testRuntimeClasspath());
+      runConfRuntimeCp.addAll(runConf.project.getTestRuntimeClasspath());
     }
 
-    def sdk = runConf.module?.sdk ? runConf.module.sdk : runConf.project.projectSdk;
+    def sdk = runConf.module?.javaSdk ? runConf.module.javaSdk : runConf.project.javaSdk;
     if (sdk != null) {
-      for (String pathEl: sdk.getClasspathRoots(ClasspathKind.TEST_RUNTIME)) {
+      for (String pathEl: sdk.getRuntimeRoots()) {
         runConfRuntimeCp.add(pathEl);
       }
     }

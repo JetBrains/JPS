@@ -1,8 +1,9 @@
 package org.jetbrains.jps
 
-import org.jetbrains.jps.idea.IdeaProjectLoadingUtil
+import org.jetbrains.jps.idea.IdeaPathUtil
 import org.jetbrains.jps.idea.ModuleMacroExpander
 import org.jetbrains.jps.idea.OwnServiceLoader
+import org.jetbrains.jps.idea.ProjectMacroExpander
 import org.jetbrains.jps.runConf.RunConfigurationLauncherService
 
 /**
@@ -10,17 +11,17 @@ import org.jetbrains.jps.runConf.RunConfigurationLauncherService
  * @author pavel.sher
  */
 public class RunConfiguration {
-  final Project project;
+  final IProject project;
   final String name;
   final String type;
-  final Module module;
+  final IModule module;
   final String workingDir;
   final Map<String, String> allOptions;
   final Map<String, String> envVars;
   final Node node;
   final MacroExpander macroExpander;
 
-  def RunConfiguration(Project project, MacroExpander macroExpander, Node confTag) {
+  def RunConfiguration(IProject project, ProjectMacroExpander macroExpander, Node confTag) {
     this.project = project;
     this.name = confTag.'@name';
     this.type = confTag.'@type';
@@ -37,7 +38,7 @@ public class RunConfiguration {
 
     def moduleNode = confTag.module[0];
     if (moduleNode != null && !"wholeProject".equals(this.allOptions['TEST_SEARCH_SCOPE'])) {
-      this.module = project.modules[moduleNode.'@name'];
+      this.module = project.findModuleByName(moduleNode.'@name');
     } else {
       this.module = null;
     }
@@ -50,7 +51,7 @@ public class RunConfiguration {
     def String workDirUrl = this.allOptions['WORKING_DIRECTORY'];
     if (workDirUrl == null) workDirUrl = "";
     if (workDirUrl != '') {
-      workDirUrl = this.macroExpander.expandMacros(IdeaProjectLoadingUtil.pathFromUrl(workDirUrl));
+      workDirUrl = this.macroExpander.expandMacros(IdeaPathUtil.pathFromUrl(workDirUrl));
     }
 
     this.workingDir = workDirUrl == '' ? new File(".").getCanonicalPath() : new File(workDirUrl).getCanonicalPath();

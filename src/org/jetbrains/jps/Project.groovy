@@ -10,7 +10,7 @@ import org.jetbrains.jps.resolvers.Resolver
 /**
  * @author max
  */
-class Project {
+class Project implements IProject {
   final ProjectBuilder builder;
   final GantBinding binding;
   final List<Resolver> resolvers = []
@@ -50,6 +50,18 @@ class Project {
     }
 
     props["compiler.resources.id"] = "default.compiler.resources"
+  }
+
+  def getAnt() {
+    return binding.ant;
+  }
+
+  IModule findModuleByName(String moduleName) {
+    return this.modules[moduleName];
+  }
+
+  IJavaSdk getJavaSdk() {
+    return this.projectSdk;
   }
 
   def Module createModule(String name, Closure initializer) {
@@ -148,11 +160,11 @@ class Project {
     artifactBuilder.buildArtifact(artifact)
   }
 
-  List<String> runtimeClasspath() {
+  List<String> getRuntimeClasspath() {
     return builder.projectRuntimeClasspath(false);
   }
 
-  List<String> testRuntimeClasspath() {
+  List<String> getTestRuntimeClasspath() {
     return builder.projectRuntimeClasspath(true);
   }
 

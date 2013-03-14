@@ -2,7 +2,7 @@ package org.jetbrains.jps.artifacts.ant
 
 import org.jetbrains.jps.MacroExpander
 import org.jetbrains.jps.artifacts.ArtifactPropertiesProviderService
-import org.jetbrains.jps.idea.IdeaProjectLoadingUtil
+import org.jetbrains.jps.idea.IdeaPathUtil
 
 /**
  * @author nik
@@ -19,7 +19,7 @@ class AntArtifactPropertiesProvider extends ArtifactPropertiesProviderService<An
 
     if (filePathNode == null) throw new IllegalArgumentException("Path to build.xml is not specified");
 
-    String file = macroExpander.expandMacros(IdeaProjectLoadingUtil.pathFromUrl(filePathNode.text()))
+    String file = macroExpander.expandMacros(IdeaPathUtil.pathFromUrl(filePathNode.text()))
     String target = targetNode.text()
     boolean enabled = node."@enabled" == "true"
     List<List<String>> properties = []

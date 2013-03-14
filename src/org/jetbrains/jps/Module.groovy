@@ -5,7 +5,7 @@ import org.jetbrains.jps.idea.Facet
 /**
  * @author max
  */
-class Module extends LazyInitializeableObject implements ClasspathItem {
+class Module extends LazyInitializeableObject implements IModule, ClasspathItem {
   Project project;
   String name;
   Sdk sdk;
@@ -67,6 +67,14 @@ class Module extends LazyInitializeableObject implements ClasspathItem {
     })
   }
 
+  IJavaSdk getJavaSdk() {
+    return this.sdk;
+  }
+
+  String getBasePath() {
+    return this.basePath;
+  }
+
   def String toString() {
     return "module ${name}"
   }
@@ -88,11 +96,11 @@ class Module extends LazyInitializeableObject implements ClasspathItem {
     return project.builder.moduleOutput(this)
   }
 
-  List<String> runtimeClasspath() {
+  List<String> getRuntimeClasspath() {
     project.builder.moduleRuntimeClasspath(this, false)
   }
 
-  List<String> testRuntimeClasspath() {
+  List<String> getTestRuntimeClasspath() {
     project.builder.moduleRuntimeClasspath(this, true)
   }
 

@@ -4,8 +4,7 @@ import org.jetbrains.jps.MacroExpander
 import org.jetbrains.jps.Module
 import org.jetbrains.jps.idea.Facet
 import org.jetbrains.jps.idea.FacetTypeService
-
-import org.jetbrains.jps.idea.IdeaProjectLoadingUtil
+import org.jetbrains.jps.idea.IdeaPathUtil
 
 /**
  * @author nik
@@ -31,7 +30,7 @@ class GwtFacetType extends FacetTypeService {
           facet.additionalCompilerParameters = value
           break
         case "gwtSdkUrl":
-          facet.sdkPath = macroExpander.expandMacros(IdeaProjectLoadingUtil.pathFromUrl(value))
+          facet.sdkPath = macroExpander.expandMacros(IdeaPathUtil.pathFromUrl(value))
           break
       }
     }
