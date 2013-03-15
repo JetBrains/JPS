@@ -8,6 +8,12 @@
       <element id="dir-copy" path="$PROJECT_DIR$/plugins/jpa/src" />
       <element id="dir-copy" path="$PROJECT_DIR$/antLayout/src" />
       <element id="dir-copy" path="$PROJECT_DIR$/programRunner/src" />
+      <element id="dir-copy" path="$PROJECT_DIR$/common/src" />
+      <element id="dir-copy" path="$PROJECT_DIR$/execution/src" />
+      <element id="dir-copy" path="$PROJECT_DIR$/plugins/execution-java/src" />
+      <element id="dir-copy" path="$PROJECT_DIR$/plugins/execution-kotlin/src" />
+      <element id="dir-copy" path="$PROJECT_DIR$/plugins/kotlin/src" />
+      <element id="dir-copy" path="$PROJECT_DIR$/plugins/scala/src" />
     </root>
   </artifact>
 </component>
