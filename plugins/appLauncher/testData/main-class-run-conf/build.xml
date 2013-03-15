@@ -1,9 +1,0 @@
-<project name="test" default="example1" basedir=".">
-    <target name="example1">
-        <echo message="example1 called!, dir: ${basedir}"/>
-    </target>
-
-    <target name="example2">
-        <echo message="example2 called!, dir: ${basedir}"/>
-    </target>
-</project>
