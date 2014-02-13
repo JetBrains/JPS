@@ -1,9 +1,6 @@
 package org.jetbrains.jps.runConf.java;
 
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileReader;
-import java.io.IOException;
+import java.io.*;
 import java.lang.reflect.Method;
 import java.net.URL;
 import java.net.URLClassLoader;
@@ -39,11 +36,32 @@ public class MainClassLauncher {
 
     try {
       mainMethod.invoke(null, new Object[] { arguments.toArray(new String[arguments.size()])});
-    } catch (Throwable e) {
+    }
+    catch (Throwable e) {
+      reportBuildProblem(e.toString());
       throw new RuntimeException("Exception occurred in main class: " + main.getName() + ", error: " + e.toString(), e);
     }
 
     System.exit(0);
+  }
+
+  private static void reportBuildProblem(final String message) { // todo reuse TeamCity code
+    System.err.println("##teamcity[buildProblem type='jps-runtime-error' identity='" +
+                         ("jps-runtime-error" + message).hashCode() +
+                         "' description='" + escape(message) + "']");
+  }
+
+  private static String escape(final String message) {
+    return message
+      .replace("|", "||")
+      .replace("\n", "|n")
+      .replace("\r", "|r")
+      .replace("\u0085", "|0x0085")
+      .replace("\u2028", "|0x2028")
+      .replace("\u2029", "|0x2029")
+      .replace("'", "|'")
+      .replace("[", "|[")
+      .replace("]", "|]");
   }
 
   private static URL[] getClasspathElems(String tempFileName) throws IOException {
