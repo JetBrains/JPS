@@ -1,5 +1,6 @@
 package org.jetbrains.jps.runConf.java
 
+import org.jetbrains.jps.IJavaSdk
 import org.jetbrains.jps.RunConfiguration
 import org.jetbrains.jps.idea.IdeaPathUtil
 import org.jetbrains.jps.runConf.RunConfigurationLauncherService
@@ -119,7 +120,24 @@ public abstract class JavaBasedRunConfigurationLauncher extends RunConfiguration
     def runConfRuntimeCp = getRuntimeClasspath(runConf);
 
     def attrs = [:];
-    def sdk = module?.javaSdk ? module.javaSdk : project.javaSdk;
+
+    def moduleJre = module?.javaSdk;
+
+    IJavaSdk sdk;
+
+    // Run Configuration specified jre
+    if ("true".equalsIgnoreCase(runConf.allOptions['ALTERNATIVE_JRE_PATH_ENABLED'])) {
+      def jreNameOrPath = runConf.allOptions['ALTERNATIVE_JRE_PATH']
+      def provider = project.getJavaSdkProvider()
+      sdk = provider.findByName(jreNameOrPath)
+      if (sdk == null) provider.findByPath(jreNameOrPath)
+      if (sdk == null) {
+        project.warning("Cannot find run configuration specified jre '${jreNameOrPath}', will use jre from ${moduleJre ? "module" : "project"}");
+      }
+    }
+    if (sdk == null) {
+      sdk = moduleJre ? moduleJre : project.javaSdk;
+    }
     if (sdk != null) {
       attrs["jvm"] = sdk.getJavaExecutable();
     } else {

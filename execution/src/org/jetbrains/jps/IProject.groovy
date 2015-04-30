@@ -11,6 +11,8 @@ public interface IProject {
 
   IJavaSdk getJavaSdk();
 
+  IJavaSdkProvider getJavaSdkProvider();
+
   List<String> getTestRuntimeClasspath();
 
   Collection<IModule> getAllModules();

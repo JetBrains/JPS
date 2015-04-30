@@ -64,6 +64,19 @@ class Project implements IProject {
     return this.projectSdk;
   }
 
+  IJavaSdkProvider getJavaSdkProvider() {
+    return new IJavaSdkProvider() {
+      IJavaSdk findByName(final String name) {
+        def sdk = sdks[name]
+        return sdk instanceof JavaSdk ? (JavaSdk) sdk : null
+      }
+
+      IJavaSdk findByPath(final String path) {
+        return sdks.values().find {it instanceof JavaSdk && it.jdkPath.equals(path)} as IJavaSdk;
+      }
+    }
+  }
+
   Collection<IModule> getAllModules() {
     return new ArrayList<IModule>(this.modules.values());
   }
