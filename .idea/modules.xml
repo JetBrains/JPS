@@ -7,6 +7,7 @@
       <module fileurl="file://$PROJECT_DIR$/execution/execution.iml" filepath="$PROJECT_DIR$/execution/execution.iml" />
       <module fileurl="file://$PROJECT_DIR$/plugins/execution-java/execution-java.iml" filepath="$PROJECT_DIR$/plugins/execution-java/execution-java.iml" />
       <module fileurl="file://$PROJECT_DIR$/plugins/execution-kotlin/execution-kotlin.iml" filepath="$PROJECT_DIR$/plugins/execution-kotlin/execution-kotlin.iml" />
+      <module fileurl="file://$PROJECT_DIR$/execution-runtime/execution-runtime.iml" filepath="$PROJECT_DIR$/execution-runtime/execution-runtime.iml" />
       <module fileurl="file://$PROJECT_DIR$/plugins/gwt/gwt.iml" filepath="$PROJECT_DIR$/plugins/gwt/gwt.iml" />
       <module fileurl="file://$PROJECT_DIR$/plugins/javaee/javaee.iml" filepath="$PROJECT_DIR$/plugins/javaee/javaee.iml" />
       <module fileurl="file://$PROJECT_DIR$/plugins/jpa/jpa.iml" filepath="$PROJECT_DIR$/plugins/jpa/jpa.iml" />
@@ -17,4 +18,3 @@
     </modules>
   </component>
 </project>
-
