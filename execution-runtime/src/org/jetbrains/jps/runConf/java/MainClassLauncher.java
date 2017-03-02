@@ -98,7 +98,7 @@ public class MainClassLauncher {
   }
 
   /**
-   * This classloader makes classes from the specified URLs more preferrable than classes from the parent classloader.
+   * This classloader makes classes from the specified URLs more preferable than classes from the parent classloader.
    * Specified main class is loaded by this classloader.
    */
   private static class MainClassClassLoader extends URLClassLoader {
