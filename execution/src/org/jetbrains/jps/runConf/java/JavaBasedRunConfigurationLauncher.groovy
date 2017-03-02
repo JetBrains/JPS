@@ -5,6 +5,8 @@ import org.jetbrains.jps.RunConfiguration
 import org.jetbrains.jps.idea.IdeaPathUtil
 import org.jetbrains.jps.runConf.RunConfigurationLauncherService
 
+import org.jetbrains.jps.runConf.java.MainClassLauncher
+
 /**
  * This launcher is able can be used to start Java main class.
  */
