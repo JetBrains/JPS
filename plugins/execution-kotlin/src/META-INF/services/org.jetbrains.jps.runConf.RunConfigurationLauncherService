@@ -1,1 +1,2 @@
 org.jetbrains.jps.kotlin.KotlinAppLauncher
+org.jetbrains.jps.kotlin.KotlinStandaloneScriptLauncher

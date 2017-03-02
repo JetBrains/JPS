@@ -21,6 +21,8 @@ public class RunConfiguration {
   final Node node;
   final MacroExpander macroExpander;
 
+  private final static Map<String, String> ourOptionAliases = new HashMap<String, String>();
+
   def RunConfiguration(IProject project, ProjectMacroExpander macroExpander, Node confTag) {
     this.project = project;
     this.name = confTag.'@name';
@@ -33,7 +35,12 @@ public class RunConfiguration {
       if (value == null) {
         value = opt.value ? opt.value[0].'@defaultName' : null;
       }
-      this.allOptions[opt.'@name'] = value;
+      String name = opt.'@name'
+      this.allOptions[name] = value
+      def alias = ourOptionAliases.get(name)
+      if (alias != null) {
+        this.allOptions[alias] = value
+      }
     }
 
     def moduleNode = confTag.module[0];
@@ -72,5 +79,17 @@ public class RunConfiguration {
     }
 
     return null;
+  }
+
+  static {
+    // Thanks to KotlinStandaloneScriptRunConfigurationType
+    ourOptionAliases.put('vmParameters', 'VM_PARAMETERS')
+    ourOptionAliases.put('programParameters', 'PROGRAM_PARAMETERS')
+    ourOptionAliases.put('passParentEnvs', 'PASS_PARENT_ENVS')
+    ourOptionAliases.put('workingDirectory', 'WORKING_DIRECTORY')
+    ourOptionAliases.put('alternativeJrePath', 'ALTERNATIVE_JRE_PATH')
+    ourOptionAliases.put('isAlternativeJrePathEnabled', 'ALTERNATIVE_JRE_PATH_ENABLED')
+    ourOptionAliases.put('mainClassName', 'MAIN_CLASS_NAME')
+    ourOptionAliases.put('filePath', 'FILE_PATH')
   }
 }
