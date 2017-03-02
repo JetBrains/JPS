@@ -75,7 +75,7 @@ public class IdeaProjectLoader {
     def iprFile = new File(path).getAbsoluteFile()
     projectMacroExpander = new ProjectMacroExpander(pathVariables, iprFile.parentFile.absolutePath)
 
-    def root = new XmlParser(false, false).parse(iprFile)
+    def root = XmlUtil.createNonValidatingXmlParser().parse(iprFile)
     loadProjectJdkAndOutput(root)
     loadCompilerConfiguration(root)
     loadProjectFileEncodings(root)
@@ -92,26 +92,26 @@ public class IdeaProjectLoader {
 
     def miscXml = new File(dir, "misc.xml")
     if (!miscXml.exists()) project.error("Cannot find misc.xml in $dir")
-    loadProjectJdkAndOutput(new XmlParser(false, false).parse(miscXml))
+    loadProjectJdkAndOutput(XmlUtil.createNonValidatingXmlParser().parse(miscXml))
 
     def encodingsXml = new File(dir, "encodings.xml")
     if (encodingsXml.exists()) {
-      loadProjectFileEncodings(new XmlParser(false, false).parse(encodingsXml))
+      loadProjectFileEncodings(XmlUtil.createNonValidatingXmlParser().parse(encodingsXml))
     }
 
     def compilerXml = new File(dir, "compiler.xml")
     if (compilerXml.exists()) {
-      loadCompilerConfiguration(new XmlParser(false, false).parse(compilerXml))
+      loadCompilerConfiguration(XmlUtil.createNonValidatingXmlParser().parse(compilerXml))
     }
 
-    Node modulesXmlRoot = new XmlParser(false, false).parse(modulesXml)
+    Node modulesXmlRoot = XmlUtil.createNonValidatingXmlParser().parse(modulesXml)
     loadModules(modulesXmlRoot.component[0])
 
     def librariesFolder = new File(dir, "libraries")
     if (librariesFolder.isDirectory()) {
       librariesFolder.eachFile {File file ->
         if (file.isFile()) {
-          Node librariesComponent = new XmlParser(false, false).parse(file)
+          Node librariesComponent = XmlUtil.createNonValidatingXmlParser().parse(file)
           loadProjectLibraries(librariesComponent)
         }
       }
@@ -121,7 +121,7 @@ public class IdeaProjectLoader {
     if (artifactsFolder.isDirectory()) {
       artifactsFolder.eachFile {File file ->
         if (file.isFile()) {
-          def artifactsComponent = new XmlParser(false, false).parse(file)
+          def artifactsComponent = XmlUtil.createNonValidatingXmlParser().parse(file)
           loadArtifacts(artifactsComponent)
         }
       }
@@ -131,7 +131,7 @@ public class IdeaProjectLoader {
     if (runConfFolder.isDirectory()) {
       runConfFolder.eachFile {File file ->
         if (file.isFile()) {
-          def runConfManager = new XmlParser(false, false).parse(file);
+          def runConfManager = XmlUtil.createNonValidatingXmlParser().parse(file);
           loadRunConfigurations(runConfManager);
         }
       }
@@ -329,7 +329,7 @@ public class IdeaProjectLoader {
     project.createModule(currentModuleName) {
       Module currentModule = project.modules[currentModuleName]
       currentModule.basePath = moduleBasePath
-      def root = new XmlParser(false, false).parse(moduleFile)
+      def root = XmlUtil.createNonValidatingXmlParser().parse(moduleFile)
       def componentTag = getComponent(root, "NewModuleRootManager")
       if (componentTag != null) {
         componentTag.orderEntry.each {Node entryTag ->

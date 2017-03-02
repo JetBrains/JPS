@@ -1,6 +1,7 @@
 package org.jetbrains.jps.gwt
 
-import org.xml.sax.SAXParseException;
+import org.jetbrains.jps.XmlUtil
+import org.xml.sax.SAXParseException
 
 /**
  * @author nik
@@ -8,7 +9,7 @@ import org.xml.sax.SAXParseException;
 class GwtModuleUtil {
   public static boolean hasEntryPoints(File child) {
     try {
-      def root = new XmlParser(false, false).parse(child)
+      def root = XmlUtil.createNonValidatingXmlParser().parse(child)
       return !root."entry-point".isEmpty()
     }
     catch (IOException e) {
