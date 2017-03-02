@@ -100,14 +100,14 @@ class Project implements IProject {
   }
 
   def Library createLibrary(String name, Closure initializer) {
-    createLibrary(name, initializer, libraries, "project.library")
+    doCreateLibrary(name, initializer, libraries, "project.library")
   }
 
   def Library createGlobalLibrary(String name, Closure initializer) {
-    createLibrary(name, initializer, globalLibraries, "project.globalLibrary")
+    doCreateLibrary(name, initializer, globalLibraries, "project.globalLibrary")
   }
 
-  private def Library createLibrary(String name, Closure initializer, Map<String, Library> libraries, String accessor) {
+  private def Library doCreateLibrary(String name, Closure initializer, Map<String, Library> libraries, String accessor) {
     Library lib = libraries[name]
     if (lib != null) error("Library ${name} already defined")
 
