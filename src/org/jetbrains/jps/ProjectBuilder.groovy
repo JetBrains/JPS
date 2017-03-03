@@ -2,7 +2,6 @@ package org.jetbrains.jps
 
 import org.apache.tools.ant.BuildException
 import org.codehaus.gant.GantBinding
-import org.jetbrains.jps.idea.OwnServiceLoader
 import org.jetbrains.jps.listeners.BuildInfoPrinter
 import org.jetbrains.jps.listeners.BuildStatisticsListener
 import org.jetbrains.jps.listeners.DefaultBuildInfoPrinter
@@ -28,7 +27,7 @@ class ProjectBuilder {
   final List<ModuleBuilder> weavingBuilders = []
   final CustomTasksBuilder preTasksBuilder = new CustomTasksBuilder()
   final CustomTasksBuilder postTasksBuilder = new CustomTasksBuilder()
-  static final OwnServiceLoader<ModuleBuilderService> moduleBuilderLoader = OwnServiceLoader.load(ModuleBuilderService.class)
+  static final ServiceLoader<ModuleBuilderService> moduleBuilderLoader = ServiceLoader.load(ModuleBuilderService.class)
 
   final List<JpsBuildListener> listeners = [new BuildStatisticsListener()]
   BuildInfoPrinter buildInfoPrinter = new DefaultBuildInfoPrinter()

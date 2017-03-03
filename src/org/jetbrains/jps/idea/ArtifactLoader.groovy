@@ -10,8 +10,8 @@ import org.jetbrains.jps.artifacts.*
 class ArtifactLoader {
   private final Project project
   private final MacroExpander macroExpander
-  private static OwnServiceLoader<LayoutElementTypeService> elementTypeLoader = OwnServiceLoader.load(LayoutElementTypeService.class)
-  private static OwnServiceLoader<ArtifactPropertiesProviderService> propertiesProvidersLoader = OwnServiceLoader.load(ArtifactPropertiesProviderService.class)
+  private static ServiceLoader<LayoutElementTypeService> elementTypeLoader = ServiceLoader.load(LayoutElementTypeService.class)
+  private static ServiceLoader<ArtifactPropertiesProviderService> propertiesProvidersLoader = ServiceLoader.load(ArtifactPropertiesProviderService.class)
   private static Map<String, LayoutElementTypeService> elementTypes = null
   private static Map<String, ArtifactPropertiesProviderService> propertiesProviders = null
 

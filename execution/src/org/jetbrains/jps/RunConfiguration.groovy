@@ -2,7 +2,6 @@ package org.jetbrains.jps
 
 import org.jetbrains.jps.idea.IdeaPathUtil
 import org.jetbrains.jps.idea.ModuleMacroExpander
-import org.jetbrains.jps.idea.OwnServiceLoader
 import org.jetbrains.jps.idea.ProjectMacroExpander
 import org.jetbrains.jps.runConf.RunConfigurationLauncherService
 
@@ -69,7 +68,7 @@ public class RunConfiguration {
     }
   }
 
-  private static OwnServiceLoader<RunConfigurationLauncherService> runConfLauncherServices = OwnServiceLoader.load(RunConfigurationLauncherService.class)
+  private static ServiceLoader<RunConfigurationLauncherService> runConfLauncherServices = ServiceLoader.load(RunConfigurationLauncherService.class)
 
   def RunConfigurationLauncherService getLauncher() {
     for (RunConfigurationLauncherService service: runConfLauncherServices.iterator()) {
