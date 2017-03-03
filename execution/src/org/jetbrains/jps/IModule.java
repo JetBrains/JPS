@@ -1,4 +1,6 @@
-package org.jetbrains.jps
+package org.jetbrains.jps;
+
+import java.util.List;
 
 /**
  * @author Maxim.Manuylov

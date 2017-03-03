@@ -1,4 +1,4 @@
-package org.jetbrains.jps
+package org.jetbrains.jps;
 
 public interface IJavaSdkProvider {
     IJavaSdk findByName(String name);

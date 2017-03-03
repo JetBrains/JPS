@@ -11,7 +11,7 @@ public class ClasspathUtil {
   private static final String JAR_DELIMITER = "!";
   private static final String PROTOCOL_DELIMITER = ":";
 
-  public static String composeClasspath(Class[] classes) {
+  public static String composeClasspath(Class... classes) {
     Set<String> cp = new LinkedHashSet<String>();
     if (classes != null) {
       for (Class classFromLib : classes) {

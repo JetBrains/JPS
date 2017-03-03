@@ -1,11 +1,16 @@
-package org.jetbrains.jps
+package org.jetbrains.jps;
+
+import org.codehaus.gant.GantBuilder;
+
+import java.util.Collection;
+import java.util.List;
 
 /**
  * @author Maxim.Manuylov
  *         Date: 14.03.13
  */
 public interface IProject {
-  def getAnt();
+  GantBuilder getAnt();
 
   IModule findModuleByName(String moduleName);
 
@@ -17,9 +22,9 @@ public interface IProject {
 
   Collection<IModule> getAllModules();
 
-  def info(String text);
+  void info(String text);
 
-  def warning(String text);
+  void warning(String text);
 
-  def error(String text);
+  void error(String text);
 }
