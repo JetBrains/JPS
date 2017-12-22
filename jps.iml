@@ -16,6 +16,6 @@
     <orderEntry type="library" exported="" name="Gant" level="application" />
     <orderEntry type="module" module-name="programRunner" />
     <orderEntry type="module" module-name="execution" />
-    <orderEntry type="library" name="Groovy" level="project" />
+    <orderEntry type="library" exported="" name="Groovy" level="project" />
   </component>
 </module>
