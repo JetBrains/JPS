@@ -106,6 +106,7 @@ public abstract class JavaBasedRunConfigurationLauncher extends RunConfiguration
 
     final Ant task = new Ant();
     task.setProject(project.getAntProject());
+    task.setTaskName("Ant Before RunConfiguration '" + runConf.getName() + "'");
     task.setAntfile(antfile);
     task.setDir(new File(runConf.getWorkingDir()));
     if (target != null) {
@@ -127,6 +128,7 @@ public abstract class JavaBasedRunConfigurationLauncher extends RunConfiguration
 
     final Java task = new Java();
     task.setProject(project.getAntProject());
+    task.setTaskName("Java RunConfiguration '" + runConf.getName() + "'");
 
     IJavaSdk moduleJre = (module != null) ? module.getJavaSdk() : null;
 
