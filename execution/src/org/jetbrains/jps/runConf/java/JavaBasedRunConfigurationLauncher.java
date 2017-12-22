@@ -23,6 +23,7 @@ public abstract class JavaBasedRunConfigurationLauncher extends RunConfiguration
   private File myOutputFile;
   private File myErrorFile;
   private Map<String, String> mySystemProperties = new HashMap<String, String>();
+  protected boolean myLogPrimaryRunInSeparateBlock;
 
   public JavaBasedRunConfigurationLauncher(String typeId) {
     super(typeId);
@@ -116,6 +117,7 @@ public abstract class JavaBasedRunConfigurationLauncher extends RunConfiguration
       task.setOutput(myOutputFile.getAbsolutePath());
     }
 
+    myLogPrimaryRunInSeparateBlock = true;
     project.info("Starting Ant before launching run configuration " + runConf.getName() + "...");
     task.perform();
   }
@@ -128,7 +130,10 @@ public abstract class JavaBasedRunConfigurationLauncher extends RunConfiguration
 
     final Java task = new Java();
     task.setProject(project.getAntProject());
-    task.setTaskName("Java run configuration '" + runConf.getName() + "'");
+    if (myLogPrimaryRunInSeparateBlock) {
+      // Do not set name if there's no ant pre-run target so TeamCity won't create unnecessary folding
+      task.setTaskName("Java run configuration '" + runConf.getName() + "'");
+    }
 
     IJavaSdk moduleJre = (module != null) ? module.getJavaSdk() : null;
 
@@ -179,7 +184,9 @@ public abstract class JavaBasedRunConfigurationLauncher extends RunConfiguration
     final String mainClassCpFile = createTempFile(getMainClassClasspath(runConf));
     final String tmpArgs = createTempFile(splitCommandArgumentsAndUnquote(classArgs));
 
-    project.info("Starting run configuration " + runConf.getName() + "...");
+    if (myLogPrimaryRunInSeparateBlock) {
+      project.info("Starting run configuration " + runConf.getName() + "...");
+    }
 
     task.createArg().setLine("" + mainClass + " \"" + mainClassCpFile + "\" \"" + runConfRuntimeCpFile + "\" \"" + tmpArgs + "\"");
     task.createJvmarg().setLine(jvmArgs);
