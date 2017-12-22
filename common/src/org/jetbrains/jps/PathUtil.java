@@ -22,7 +22,7 @@ public class PathUtil {
       String res = na.substring(nb.length());
       if (res.length() > 0 && res.startsWith("/")) return res.substring(1);
       return res;
-    };
+    }
     return absPath;
   }
 
