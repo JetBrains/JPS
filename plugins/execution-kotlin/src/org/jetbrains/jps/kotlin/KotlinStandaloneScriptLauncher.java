@@ -25,7 +25,7 @@ import java.util.Map;
  */
 
 public class KotlinStandaloneScriptLauncher extends JavaBasedRunConfigurationLauncher {
-    KotlinStandaloneScriptLauncher() {
+    public KotlinStandaloneScriptLauncher() {
         super("KotlinStandaloneScriptRunConfigurationType");
     }
 /*
