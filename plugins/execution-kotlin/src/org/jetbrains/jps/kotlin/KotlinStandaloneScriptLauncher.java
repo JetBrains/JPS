@@ -1,7 +1,11 @@
-package org.jetbrains.jps.kotlin
+package org.jetbrains.jps.kotlin;
 
-import org.jetbrains.jps.RunConfiguration
-import org.jetbrains.jps.runConf.java.JavaBasedRunConfigurationLauncher
+import org.jetbrains.jps.RunConfiguration;
+import org.jetbrains.jps.runConf.java.JavaBasedRunConfigurationLauncher;
+
+import java.util.Arrays;
+import java.util.List;
+import java.util.Map;
 
 /*
 <component name="ProjectRunConfigurationManager">
@@ -22,7 +26,7 @@ import org.jetbrains.jps.runConf.java.JavaBasedRunConfigurationLauncher
 
 class KotlinStandaloneScriptLauncher extends JavaBasedRunConfigurationLauncher {
     KotlinStandaloneScriptLauncher() {
-        super("KotlinStandaloneScriptRunConfigurationType")
+        super("KotlinStandaloneScriptRunConfigurationType");
     }
 /*
 Expected command line:
@@ -40,40 +44,42 @@ Expected command line:
  */
 
     @Override
-    String getMainClassName(RunConfiguration runConf) {
-        return "org.jetbrains.kotlin.cli.jvm.K2JVMCompiler"
+    public String getMainClassName(RunConfiguration runConf) {
+        return "org.jetbrains.kotlin.cli.jvm.K2JVMCompiler";
     }
 
     @Override
-    String getMainClassArguments(RunConfiguration runConf) {
-        def sb = new StringBuilder()
-        sb.append('-script "')
-        sb.append(expand(runConf, runConf.allOptions["FILE_PATH"])).append('"')
-        def pps = runConf.allOptions["PROGRAM_PARAMETERS"]
+    public String getMainClassArguments(RunConfiguration runConf) {
+        StringBuilder sb = new StringBuilder();
+        sb.append("-script ")
+            .append('"')
+            .append(expand(runConf, runConf.getOption("FILE_PATH")))
+            .append('"');
+        String pps = runConf.getOption("PROGRAM_PARAMETERS");
         if (pps != null) {
-            sb.append(' ').append(expand(runConf, pps))
+            sb.append(' ').append(expand(runConf, pps));
         }
-        return sb.toString()
+        return sb.toString();
     }
 
     @Override
-    String getJVMArguments(RunConfiguration runConf) {
-        return super.getJVMArguments(runConf) + ' -Dfile.encoding=UTF-8'
+    public String getJVMArguments(RunConfiguration runConf) {
+        return super.getJVMArguments(runConf) + " -Dfile.encoding=UTF-8";
     }
 
     @Override
-    List<String> getMainClassClasspath(RunConfiguration runConf) {
-        return getKotlinRuntimeJars(runConf)
+    public List<String> getMainClassClasspath(RunConfiguration runConf) {
+        return getKotlinRuntimeJars(runConf);
     }
 
     private List<String> getKotlinRuntimeJars(RunConfiguration runConf) {
-        def properties = getSystemProperties(runConf)
-        def kotlin_home = properties['jps.kotlin.home'] // Usually 'kotlinc' directory
-        if (kotlin_home == null) throw new IllegalStateException("jps.kotlin.home is not set")
-        return ["$kotlin_home/lib/kotlin-compiler.jar", "$kotlin_home/lib/kotlin-stdlib.jar", "$kotlin_home/lib/kotlin-reflect.jar"]
+        Map<String, String> properties = getSystemProperties(runConf);
+        String kotlin_home = properties.get("jps.kotlin.home"); // Usually 'kotlinc' directory
+        if (kotlin_home == null) throw new IllegalStateException("jps.kotlin.home is not set");
+        return Arrays.asList("$kotlin_home/lib/kotlin-compiler.jar", "$kotlin_home/lib/kotlin-stdlib.jar", "$kotlin_home/lib/kotlin-reflect.jar");
     }
 
     private static String expand(RunConfiguration runConf, String string) {
-        runConf.macroExpander.expandMacros(string)
+        return runConf.getMacroExpander().expandMacros(string);
     }
 }
