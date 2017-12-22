@@ -1,8 +1,9 @@
 package org.jetbrains.jps.runConf.java;
 
-import groovy.util.Node;
+import org.apache.tools.ant.taskdefs.Ant;
 import org.apache.tools.ant.taskdefs.Java;
 import org.apache.tools.ant.types.Environment;
+import org.jdom.Element;
 import org.jetbrains.jps.*;
 import org.jetbrains.jps.idea.IdeaPathUtil;
 import org.jetbrains.jps.runConf.RunConfigurationLauncherService;
@@ -13,7 +14,7 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.util.*;
 
-import static org.jetbrains.jps.GroovyUtil.*;
+import static org.jetbrains.jps.JDomUtil.*;
 
 /**
  * This launcher is able can be used to start Java main class.
@@ -79,12 +80,12 @@ public abstract class JavaBasedRunConfigurationLauncher extends RunConfiguration
   public void beforeStart(RunConfiguration runConf) {
     super.beforeStart(runConf);
 
-    final Node node = runConf.getNode();
-    final Node method = getFirstChildren(node, "method");
+    final Element node = runConf.getNode();
+    final Element method = getFirstChildren(node, "method");
     if (method == null) return;
 
-    Node antOption = null;
-    for (Node opt : getChildren(method, "option")) {
+    Element antOption = null;
+    for (Element opt : getChildren(method, "option")) {
       final String name = getAttribute(opt, "name");
       final String enabled = getAttribute(opt, "enabled");
       if ("true".equals(enabled) && "AntTarget".equals(name)) {
@@ -103,19 +104,18 @@ public abstract class JavaBasedRunConfigurationLauncher extends RunConfiguration
 
     final IProject project = runConf.getProject();
 
-    final Map<String, String> attrs = new HashMap<String, String>();
-    attrs.put("antfile", antfile);
-    attrs.put("dir", runConf.getWorkingDir());
+    final Ant task = new Ant();
+    task.setAntfile(antfile);
+    task.setDir(new File(runConf.getWorkingDir()));
     if (target != null) {
-      attrs.put("target", target);
+      task.setTarget(target);
     }
     if (myOutputFile != null) {
-      attrs.put("output", myOutputFile.getAbsolutePath());
+      task.setOutput(myOutputFile.getAbsolutePath());
     }
 
     project.info("Starting Ant before launching run configuration " + runConf.getName() + "...");
-    // TODO: Check it passes proper args
-    project.getAnt().invokeMethod("ant", new Object[]{attrs});
+    task.execute();
   }
 
 

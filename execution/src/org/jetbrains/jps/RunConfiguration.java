@@ -1,6 +1,6 @@
 package org.jetbrains.jps;
 
-import groovy.util.Node;
+import org.jdom.Element;
 import org.jetbrains.jps.idea.IdeaPathUtil;
 import org.jetbrains.jps.idea.ModuleMacroExpander;
 import org.jetbrains.jps.idea.ProjectMacroExpander;
@@ -10,7 +10,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.ServiceLoader;
 
-import static org.jetbrains.jps.GroovyUtil.*;
+import static org.jetbrains.jps.JDomUtil.*;
 
 /**
  * Represents IntelliJ IDEA run configuration.
@@ -24,21 +24,20 @@ public class RunConfiguration {
   private final String workingDir;
   private final Map<String, String> allOptions;
   private final Map<String, String> envVars;
-  private final Node node;
+  private final Element node;
   private final MacroExpander macroExpander;
 
   private final static Map<String, String> ourOptionAliases = new HashMap<String, String>();
 
-  public RunConfiguration(IProject project, ProjectMacroExpander macroExpander, Node confTag) {
-    MacroExpander macroExpander1;
+  public RunConfiguration(IProject project, ProjectMacroExpander macroExpander, Element element) {
     this.project = project;
-    this.node = confTag;
+    this.node = element;
     this.name = getAttribute(node, "name");
     this.type = getAttribute(node, "type");
 
     this.allOptions = new HashMap<String, String>();
 
-    for (Node opt : getChildren(node, "option")) {
+    for (Element opt : getChildren(node, "option")) {
       String value = getAttribute(opt, "value");
       if (value == null) {
         value = getAttribute(getFirstChildren(opt, "value"), "defaultName");
@@ -51,18 +50,18 @@ public class RunConfiguration {
       }
     }
 
-    Node moduleNode = getFirstChildren(node, "module");
+    Element moduleNode = getFirstChildren(node, "module");
     if (moduleNode != null && !"wholeProject".equals(this.allOptions.get("TEST_SEARCH_SCOPE"))) {
       this.module = project.findModuleByName(getAttribute(moduleNode, "name"));
     } else {
       this.module = null;
     }
 
-    macroExpander1 = macroExpander;
+    MacroExpander expander = macroExpander;
     if (this.module != null) {
-      macroExpander1 = new ModuleMacroExpander(macroExpander, this.module.getBasePath());
+      expander = new ModuleMacroExpander(macroExpander, this.module.getBasePath());
     }
-    this.macroExpander = macroExpander1;
+    this.macroExpander = expander;
 
     String workDirUrl = this.allOptions.get("WORKING_DIRECTORY");
     if (workDirUrl == null) workDirUrl = "";
@@ -73,7 +72,7 @@ public class RunConfiguration {
     this.workingDir = getCanonicalPath(workDirUrl.isEmpty() ? "." : workDirUrl);
 
     this.envVars = new HashMap<String, String>();
-    for (Node el : getChildren(getFirstChildren(node, "envs"), "env")) {
+    for (Element el : getChildren(getFirstChildren(node, "envs"), "env")) {
       envVars.put(getAttribute(el, "name"), getAttribute(el, "value"));
     }
   }
@@ -118,7 +117,7 @@ public class RunConfiguration {
     return envVars;
   }
 
-  public Node getNode() {
+  public Element getNode() {
     return node;
   }
 

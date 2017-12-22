@@ -1,7 +1,5 @@
 package org.jetbrains.jps;
 
-import org.codehaus.gant.GantBuilder;
-
 import java.util.Collection;
 import java.util.List;
 
@@ -10,8 +8,6 @@ import java.util.List;
  *         Date: 14.03.13
  */
 public interface IProject {
-  GantBuilder getAnt();
-
   IModule findModuleByName(String moduleName);
 
   IJavaSdk getJavaSdk();
