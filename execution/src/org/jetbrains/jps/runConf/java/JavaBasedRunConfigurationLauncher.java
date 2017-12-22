@@ -1,6 +1,5 @@
 package org.jetbrains.jps.runConf.java;
 
-import org.apache.tools.ant.dispatch.DispatchUtils;
 import org.apache.tools.ant.taskdefs.Ant;
 import org.apache.tools.ant.taskdefs.Java;
 import org.apache.tools.ant.types.Environment;
@@ -117,7 +116,7 @@ public abstract class JavaBasedRunConfigurationLauncher extends RunConfiguration
     }
 
     project.info("Starting Ant before launching run configuration " + runConf.getName() + "...");
-    DispatchUtils.execute(task);
+    task.perform();
   }
 
 
@@ -196,7 +195,7 @@ public abstract class JavaBasedRunConfigurationLauncher extends RunConfiguration
       task.addSysproperty(var);
     }
 
-    DispatchUtils.execute(task);
+    task.perform();
   }
 
   /** This utility differs from splitHonorQuote: it considers quote in sequence 'ddd\" -' as boundary quote.
