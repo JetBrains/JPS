@@ -177,18 +177,18 @@ public abstract class JavaBasedRunConfigurationLauncher extends RunConfiguration
 
     final String mainClass = getMainClassName(runConf);
     final String jvmArgs = getJVMArguments(runConf);
-    final String classArgs = getMainClassArguments(runConf);
+    final String mainClassArgs = getMainClassArguments(runConf);
     final Collection<String> runConfRuntimeCp = getRuntimeClasspath(runConf);
 
     final String runConfRuntimeCpFile = createTempFile(runConfRuntimeCp);
     final String mainClassCpFile = createTempFile(getMainClassClasspath(runConf));
-    final String tmpArgs = createTempFile(splitCommandArgumentsAndUnquote(classArgs));
+    final String mainClassArgsFile = createTempFile(splitCommandArgumentsAndUnquote(mainClassArgs));
 
     if (myLogPrimaryRunInSeparateBlock) {
       project.info("Starting run configuration " + runConf.getName() + "...");
     }
 
-    task.createArg().setLine("" + mainClass + " \"" + mainClassCpFile + "\" \"" + runConfRuntimeCpFile + "\" \"" + tmpArgs + "\"");
+    task.createArg().setLine("" + mainClass + " \"" + mainClassCpFile + "\" \"" + runConfRuntimeCpFile + "\" \"" + mainClassArgsFile + "\"");
     task.createJvmarg().setLine(jvmArgs);
 
     for (Map.Entry<String, String> envVar : runConf.getEnvVars().entrySet()) {
@@ -279,15 +279,7 @@ public abstract class JavaBasedRunConfigurationLauncher extends RunConfiguration
     return tmp.getCanonicalPath();
   }
 
-  protected Collection<String> splitClasspath(String classpathStr) {
-    Set<String> result = new LinkedHashSet<String>();
-    if (classpathStr != null) {
-      result.addAll(Arrays.asList(classpathStr.split(File.pathSeparator)));
-    }
-    return result;
-  }
-
-  private Collection<String> getRuntimeClasspath(RunConfiguration runConf) {
+  protected Collection<String> getRuntimeClasspath(RunConfiguration runConf) {
     final IProject project = runConf.getProject();
     final IModule module = runConf.getModule();
 
