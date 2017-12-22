@@ -6,7 +6,7 @@ import org.jetbrains.jps.runConf.java.JavaBasedRunConfigurationLauncher;
 import java.util.Collections;
 import java.util.List;
 
-class KotlinAppLauncher extends JavaBasedRunConfigurationLauncher {
+public class KotlinAppLauncher extends JavaBasedRunConfigurationLauncher {
   public KotlinAppLauncher() {
     super("JetRunConfigurationType");
   }

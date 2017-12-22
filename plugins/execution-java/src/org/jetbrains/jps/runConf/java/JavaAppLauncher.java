@@ -5,7 +5,7 @@ import org.jetbrains.jps.RunConfiguration;
 import java.util.Collections;
 import java.util.List;
 
-class JavaAppLauncher extends JavaBasedRunConfigurationLauncher {
+public class JavaAppLauncher extends JavaBasedRunConfigurationLauncher {
   public JavaAppLauncher() {
     super("Application");
   }
