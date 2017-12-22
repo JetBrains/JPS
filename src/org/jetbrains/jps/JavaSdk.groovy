@@ -19,7 +19,7 @@ class JavaSdk extends Sdk implements IJavaSdk {
     return jdkPath + File.separator + "bin" + File.separator + "java";
   }
 
-  def getRuntimeRoots() {
+  def List<String> getRuntimeRoots() {
     return getClasspathRoots(ClasspathKind.TEST_RUNTIME);
   }
 }

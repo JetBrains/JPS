@@ -9,5 +9,6 @@
     <orderEntry type="sourceFolder" forTests="false" />
     <orderEntry type="module" module-name="common" exported="" />
     <orderEntry type="module" module-name="execution-runtime" exported="" />
+    <orderEntry type="library" name="Gant" level="application" />
   </component>
 </module>

@@ -1,6 +1,7 @@
 package org.jetbrains.jps
 
 import org.codehaus.gant.GantBinding
+import org.codehaus.gant.GantBuilder
 import org.jetbrains.jps.artifacts.Artifact
 import org.jetbrains.jps.artifacts.ArtifactBuilder
 import org.jetbrains.jps.resolvers.LibraryResolver
@@ -52,7 +53,7 @@ class Project implements IProject {
     props["compiler.resources.id"] = "default.compiler.resources"
   }
 
-  def getAnt() {
+  GantBuilder getAnt() {
     return binding.ant;
   }
 
