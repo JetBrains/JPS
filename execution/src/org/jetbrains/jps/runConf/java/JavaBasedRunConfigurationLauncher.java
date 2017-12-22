@@ -180,7 +180,7 @@ public abstract class JavaBasedRunConfigurationLauncher extends RunConfiguration
 
     project.info("Starting run configuration " + runConf.getName() + "...");
 
-    task.createArg().setLine("" + mainClass + " \"" + mainClassCpFile + "\" \"+" + runConfRuntimeCpFile + "\" \"" + tmpArgs + "\"");
+    task.createArg().setLine("" + mainClass + " \"" + mainClassCpFile + "\" \"" + runConfRuntimeCpFile + "\" \"" + tmpArgs + "\"");
     task.createJvmarg().setLine(jvmArgs);
 
     for (Map.Entry<String, String> envVar : runConf.getEnvVars().entrySet()) {
