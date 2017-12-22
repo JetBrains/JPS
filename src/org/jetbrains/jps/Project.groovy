@@ -57,6 +57,11 @@ class Project implements IProject {
     return binding.ant;
   }
 
+  @Override
+  org.apache.tools.ant.Project getAntProject() {
+    return binding.ant.project
+  }
+
   IModule findModuleByName(String moduleName) {
     return this.modules[moduleName];
   }
