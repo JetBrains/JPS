@@ -25,7 +25,7 @@ public class MainClassLauncher {
 
     System.out.println("Runtime classpath: " + Arrays.asList(testsRuntimeClasspath));
 
-    ClassLoader testsRuntimeClassloader = new URLClassLoader(testsRuntimeClasspath, null);
+    ClassLoader testsRuntimeClassloader = createTestsRuntimeClassloader(testsRuntimeClasspath);
     ClassLoader mainClassLoader = new MainClassClassLoader(tcRuntimeClasspath, testsRuntimeClassloader);
 
     Class<?> main = mainClassLoader.loadClass(className);
@@ -43,6 +43,18 @@ public class MainClassLauncher {
     }
 
     System.exit(0);
+  }
+
+  // creates classloader which does not load classes from the current classpath
+  private static URLClassLoader createTestsRuntimeClassloader(URL[] classpath) {
+    ClassLoader parent = null;
+    try {
+      Method platformClassLoader = ClassLoader.class.getMethod("getPlatformClassLoader");
+      parent = (ClassLoader) platformClassLoader.invoke(null);
+    } catch (Exception e) {
+      // ignore, wrong Java
+    }
+    return new URLClassLoader(classpath, parent);
   }
 
   private static void reportBuildProblem(final String message) { // todo reuse TeamCity code
